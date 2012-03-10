@@ -1,0 +1,6 @@
+*.swp
+*config.h
+*config.hpp
+
+build/*
+
