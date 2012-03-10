@@ -34,11 +34,11 @@ typedef struct matrix_header
 {
 	uint32_t rows;
 	uint32_t cols;
-	uint32_t type;      ///< Matcha::TypeId
+	uint32_t type;      ///< matcha::math::typeid
 	uint32_t channels;
 	uint32_t alignment; ///< data alignment. typically 0, 4, 8, 16.
-	uint32_t rowSize;
-	uint64_t dataSize;
+	uint32_t row_size;
+	uint64_t data_size;
 }matrix_header;
 
 matrix_header create_matrix_header(
@@ -66,18 +66,21 @@ public:
 
 protected:
 	///< @todo should pure virtual class have data member?
-	matrix_base(const Matcha::Math::matrix_header& matrixHeader);
+	matrix_base(const matcha::math::matrix_header& matrixHeader);
 	matrix_base(matrix_base&& matrixBase);
-	std::shared_ptr<matrix_data> Data_;
+	std::shared_ptr<matrix_data> data_;
 
 private:
 	matrix_base(const matrix_base& matrixBase); ///< @todo check
 	matrix_base& operator=(const matrix_base& matrixBase); ///< @todo check
 };
 
+template<typename T>
 class matrix : public matrix_base
 {
 public:
+	typedef T type;
+
 	std::shared_ptr<matcha::math::matrix_data> matrix_data()
 	{
 		return data_;
@@ -104,13 +107,13 @@ public:
 public:
 	type get(uint32_t row, uint32_t col, uint32_t channel)
 	{
-		assert( (row < Data_->header.rows) && "row, out of range" );
-		assert( (col < Data_->header.cols) && "col, out of range" );
-		assert( (channel < Data_->header.channels) && "channel, out of range" );
+		assert( (row < data_->header.rows) && "row, out of range" );
+		assert( (col < data_->header.cols) && "col, out of range" );
+		assert( (channel < data_->header.channels) && "channel, out of range" );
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.rowsize  * row +
+				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
 					sizeof(type) * (data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
@@ -123,7 +126,7 @@ public:
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.rowsize  * row +
+				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
 					sizeof(type) * (data_->header.channels * col + channel) ) );
 		*ptr = value;
 	}
@@ -136,7 +139,7 @@ public:
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.rowsize  * row +
+				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
 					sizeof(type) * (data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
@@ -149,7 +152,7 @@ public:
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.rowsize  * row +
+				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
 					sizeof(type) * (data_->header.channels * col + channel) ) );
 		return *ptr;
 	}

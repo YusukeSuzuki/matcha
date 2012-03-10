@@ -16,17 +16,21 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-include(CMakeMacro.cmake NO_POLICY_SCOPE)
+matcha_project_decraration(math)
 
-add_subdirectory (core)
-#add_subdirectory (utilities)
-#add_subdirectory (application)
-add_subdirectory (math)
-#add_subdirectory (image)
-#add_subdirectory (process)
-#add_subdirectory (device)
-#add_subdirectory (experimental)
-#add_subdirectory (opencl)
-#add_subdirectory (math.opencl)
-#add_subdirectory (image.opencl)
+file(GLOB lib_srcs "*.cpp")
+
+set(Implementation "standard" CACHE STRING "math: Implementation(standard, amd64_sse4)")
+
+if(${Implementation} STREQUAL "standard")
+	file(GLOB ext_lib_srcs "standard/*.cpp")
+elseif(${Implementation} STREQUAL "amd64_sse4")
+	file(GLOB ext_lib_srcs "amd64_sse4/*.cpp")
+	set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse4")
+	set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -msse4")
+else()
+endif()
+
+set(lib_external stdc++ m)
+matcha_library_definition(math core)
 

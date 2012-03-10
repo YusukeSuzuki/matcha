@@ -151,3 +151,4 @@ size_t size_of_type(type_id_t type_id)
 } // end of namespace math
 } // end of namespace matcha
 
+#endif
