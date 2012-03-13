@@ -4,3 +4,8 @@
 
 build/*
 
+GPATH
+GRTAGS
+GSYMS
+GTAGS
+
