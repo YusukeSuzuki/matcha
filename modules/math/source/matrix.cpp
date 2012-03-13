@@ -18,6 +18,22 @@
 #include "matcha/math/matrix.hpp"
 
 namespace matcha { namespace math {
+
+uint32_t matrix_base::rows() const noexcept
+{
+	return data_->header.rows;
+}
+
+uint32_t matrix_base::cols() const noexcept
+{
+	return data_->header.cols;
+}
+
+uint32_t matrix_base::channels() const noexcept
+{
+	return data_->header.channels;
+}
+
 } // end of namespace math
 } // end of namespace matcha
 

@@ -18,6 +18,7 @@
 #ifndef MATCHA_MATH_TYPES_HPP__
 #define MATCHA_MATH_TYPES_HPP__
 
+#include <cassert>
 #include <cstdint>
 #include <iostream>
 #include <string>
@@ -58,18 +59,16 @@ constexpr type_id_t type_id()
 
 #define MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(X,Y) \
 	template<> constexpr type_id_t type_id<X>(){ return type_id_t::Y; }
-
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  int8_t,   int8_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( uint8_t,  uint8_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int16_t,  int16_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint16_t, uint16_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int32_t,  int32_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint32_t, uint32_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int64_t,  int64_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint64_t, uint64_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(   float,  float_id);
-MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  double, double_id);
-
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  int8_t,   int8_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( uint8_t,  uint8_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int16_t,  int16_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint16_t, uint16_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int32_t,  int32_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint32_t, uint32_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int64_t,  int64_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint64_t, uint64_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(   float,  float_id);
+	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  double, double_id);
 #undef MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO
 
 template<typename T>
@@ -106,26 +105,21 @@ struct type_of_id : public type_of_id_base<void, supported_type_assert<t>()>
 
 #define MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(X, Y) \
 	template<> struct type_of_id<type_id_t::X> : public type_of_id_base<Y> {};
-
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(  int8_id,   int8_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( uint8_id,  uint8_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int16_id,  int16_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint16_id, uint16_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int32_id,  int32_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint32_id, uint32_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int64_id,  int64_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint64_id, uint64_t);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( float_id,  float);
-MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(double_id, double);
-
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(  int8_id,   int8_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( uint8_id,  uint8_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int16_id,  int16_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint16_id, uint16_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int32_id,  int32_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint32_id, uint32_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( int64_id,  int64_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(uint64_id, uint64_t);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO( float_id,  float);
+	MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO(double_id, double);
 #undef MATCHA_TYPE_OF_ID_DECRARATION_TEMP_MACRO
 
-#if 0
-#include <cassert>
-
-size_t size_of_type(type_id_t type_id)
+inline std::size_t size_of_type(type_id_t type_id)
 {
-	#define MATCHA_SWITCH_LOCAL_MACRO(X,Y) case type_id_t::X : return sizeof(Y);
+	#define MATCHA_SWITCH_LOCAL_MACRO(X,Y) case type_id_t::X : return sizeof(Y); break;
 
 	switch(type_id)
 	{
@@ -139,6 +133,7 @@ size_t size_of_type(type_id_t type_id)
 	MATCHA_SWITCH_LOCAL_MACRO(uint64_id, uint64_t);
 	MATCHA_SWITCH_LOCAL_MACRO( float_id,  float);
 	MATCHA_SWITCH_LOCAL_MACRO(double_id, double);
+	default: break;
 	}
 
 	#undef MATCHA_LOCAL_CASE_MACRO
@@ -146,7 +141,6 @@ size_t size_of_type(type_id_t type_id)
 	assert(false && "invalid type_id");
 	return 0;
 }
-#endif
 
 } // end of namespace math
 } // end of namespace matcha

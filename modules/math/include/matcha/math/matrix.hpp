@@ -30,16 +30,33 @@
 
 namespace matcha { namespace math {
 
-typedef struct matrix_header
+struct matrix_header
 {
 	uint32_t rows;
 	uint32_t cols;
-	uint32_t type;      ///< matcha::math::typeid
+	int32_t type;      ///< matcha::math::typeid
 	uint32_t channels;
 	uint32_t alignment; ///< data alignment. typically 0, 4, 8, 16.
 	uint32_t row_size;
 	uint64_t data_size;
-}matrix_header;
+};
+
+inline bool operator==(const matrix_header& a, const matrix_header& b)
+{
+	return
+		a.rows == b.rows &&
+		a.cols == b.cols &&
+		a.type == b.type &&
+		a.channels == b.channels &&
+		a.alignment == b.alignment &&
+		a.row_size == b.row_size &&
+		a.data_size == b.data_size;
+}
+
+inline bool operator!=(const matrix_header& a, const matrix_header& b)
+{
+	return !(a == b);
+}
 
 matrix_header create_matrix_header(
 	uint32_t rows, uint32_t cols, uint32_t type, uint32_t channels);
@@ -54,25 +71,25 @@ class matrix_base
 {
 public:
 	virtual ~matrix_base() throw();
-	virtual const std::type_info& element_type() const = 0;
 
 	uint32_t rows() const noexcept;
-	uint32_t height() const noexcept;
 	uint32_t cols() const noexcept;
-	uint32_t width() const noexcept;
-	uint32_t channels() const;
+	uint32_t channels() const noexcept;
 
 	matcha::math::matrix_header matrix_header() const;
 
+	inline uint32_t width() const noexcept { return cols(); }
+	inline uint32_t height() const noexcept { return rows(); }
+
 protected:
-	///< @todo should pure virtual class have data member?
 	matrix_base(const matcha::math::matrix_header& matrixHeader);
 	matrix_base(matrix_base&& matrixBase);
+
 	std::shared_ptr<matrix_data> data_;
 
 private:
-	matrix_base(const matrix_base& matrixBase); ///< @todo check
-	matrix_base& operator=(const matrix_base& matrixBase); ///< @todo check
+	matrix_base(const matrix_base& matrix_base_a);
+	matrix_base& operator=(const matrix_base& matrix_base_a);
 };
 
 template<typename T>
@@ -158,10 +175,7 @@ public:
 	}
 
 public:
-	virtual const std::type_info& element_type() const
-	{
-		return typeid(type);
-	};
+
 private:
 	matrix();
 };
