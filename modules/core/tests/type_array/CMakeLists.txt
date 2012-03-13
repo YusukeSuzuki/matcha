@@ -31,8 +31,8 @@ if(CMAKE_COMPILER_IS_GNUCXX)
 	set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
 endif()
 
-set_source_files_properties(SOURCE type_array.compile.cpp PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
+set_source_files_properties(SOURCE ${the_target}.cpp PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
 
 target_link_libraries(type_array.compile matcha_core)
-add_test(test type_array.compile)
+add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
 
