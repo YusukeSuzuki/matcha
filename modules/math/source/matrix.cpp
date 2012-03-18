@@ -34,6 +34,11 @@ uint32_t matrix_base::channels() const noexcept
 	return data_->header.channels;
 }
 
+const matrix_header& matrix_base::matrix_header() const noexcept
+{
+	return data_->header;
+}
+
 } // end of namespace math
 } // end of namespace matcha
 

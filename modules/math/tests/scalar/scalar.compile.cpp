@@ -28,7 +28,7 @@ main(int argc, char* argv[])
 	scalar<double, 3> sd3;
 	scalar_base sb = sd3;
 
-	cout << sb.size << endl;
+	cout << sb.dims << endl;
 
 	return 0;
 }

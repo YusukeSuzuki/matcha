@@ -15,32 +15,19 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_SCALAR_HPP__
-#define MATCHA_MATH_SCALAR_HPP__
+#ifndef MATCHA_MATH_MATRIX_OPERATIONS_HPP__
+#define MATCHA_MATH_MATRIX_OPERATIONS_HPP__
 
-#include <matcha/math/types.hpp>
+#include <matcha/math/scalar.hpp>
+#include <matcha/math/matrix.hpp>
 
 namespace matcha { namespace math {
 
-struct scalar_base
-{
-	type_id_t type;
-	std::size_t dims;
-	void* data;
-};
+void fill(const scalar_base& src, matrix_base& dst);
 
-template<typename T, unsigned d>
-struct scalar 
-{
-	T var[d];
-
-	operator scalar_base()
-	{
-		return {type_id<T>(), d, var};
-	}
-};
 
 } // end of namespace math
 } // end of namespace matcha
 
 #endif
+

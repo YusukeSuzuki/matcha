@@ -16,7 +16,24 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (scalar)
-add_subdirectory (matrix)
+set(the_target "matrix.compile")
+project (${the_target})
 
+enable_testing()
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../include")
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../../core/include")
+
+file(GLOB test_srcs "*.cpp")
+add_executable(${the_target} ${test_srcs})
+
+set(BUILD_FLAGS "")
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
+endif()
+
+set_source_files_properties(SOURCE ${the_target}.cpp PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
+
+target_link_libraries(matrix.compile matcha_core matcha_math)
+add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
 
