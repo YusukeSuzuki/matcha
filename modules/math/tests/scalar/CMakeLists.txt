@@ -16,6 +16,23 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (scalar)
+set(the_target "scalar.compile")
+project (${the_target})
 
+enable_testing()
+
+include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../../include")
+
+file(GLOB test_srcs "*.cpp")
+add_executable(${the_target} ${test_srcs})
+
+set(BUILD_FLAGS "")
+if(CMAKE_COMPILER_IS_GNUCXX)
+	set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
+endif()
+
+set_source_files_properties(SOURCE ${the_target}.cpp PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
+
+target_link_libraries(scalar.compile matcha_core)
+add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
 
