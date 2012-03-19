@@ -71,3 +71,33 @@ macro (matcha_library_definition name)
 	install(TARGETS ${the_target_static} DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 endmacro()
 
+# --------------------------------------------------------------------------------
+macro (matcha_test_definition name)
+	set(the_target "${name}")
+	project (${the_target})
+
+	enable_testing()
+
+	foreach(d ${ARGN})
+		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../${d}/include)
+	endforeach()
+
+	file(GLOB test_srcs "${the_target}.cpp")
+	add_executable(${the_target} ${test_srcs})
+
+	set(BUILD_FLAGS "")
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
+	endif()
+
+	set_source_files_properties(
+		SOURCE ${test_srcs} PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
+
+	foreach(d ${ARGN})
+		target_link_libraries(${the_target} matcha_${d})
+	endforeach()
+
+
+	add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
+endmacro()
+
