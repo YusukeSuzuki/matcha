@@ -77,6 +77,7 @@ public:
 	uint32_t channels() const noexcept;
 
 	const matcha::math::matrix_header& matrix_header() const noexcept;
+	matcha::math::matrix_header& matrix_header() noexcept;
 
 	inline uint32_t width() const noexcept { return cols(); }
 	inline uint32_t height() const noexcept { return rows(); }

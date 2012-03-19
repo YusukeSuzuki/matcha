@@ -15,16 +15,16 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_LINEAR_ALGEBRA_HPP__
-#define MATCHA_MATH_LINEAR_ALGEBRA_HPP__
+#ifndef MATCHA_MATH_UTILITIES_I_HPP__
+#define MATCHA_MATH_UTILITIES_I_HPP__
 
 namespace matcha { namespace math {
 
-void fill(matrix_base& dst);
-
-/**
- */
-void add(const matrix_base& a, const matrix_base& b, matrix_base& c);
+template<typename T>
+inline bool tri_equal(T a, T b, T c)
+{
+	return (a == b) && (b == c);
+}
 
 
 } // end of namespace math

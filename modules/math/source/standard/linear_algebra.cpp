@@ -15,41 +15,42 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#include "matcha/math/matrix_operations.hpp"
-#include "matcha/math/types.hpp"
+#include "matcha/math/matrix.hpp"
+#include "matcha/math/linear_algebra.hpp"
 #include "matcha/core/exception.hpp"
+
+#include "utilities_i.hpp"
 
 #include <cassert>
 
 namespace matcha { namespace math {
 
 template<typename T>
-void fill_i(const T src[], std::size_t dims, T* dst, std::size_t elems)
+void add_i(
+	const matrix_data& a, const matrix_data& b, matrix_data& c)
 {
-	for(std::size_t i = 0; i < elems; ++i)
+	for(std::size_t i = 0;
+		i < (a.header.rows * a.header.cols * a.header.channels); ++i)
 	{
-		for(std::size_t j = 0; j < dims; ++j, ++dst)
-		{
-			*dst = src[j];
-		}
+		static_cast<T*>(c.data)[i] =
+			static_cast<const T*>(a.data)[i] + static_cast<const T*>(b.data)[i];
 	}
 }
 
-void fill(const scalar_base& src, matrix_base& dst)
+void add(const matrix_base& a, const matrix_base& b, matrix_base& c)
 {
-	assert(
-		src.dims == dst.channels() && "src.dims must be equal to dst.channels()");
-	assert(src.type == static_cast<type_id_t>(dst.matrix_header().type) &&
-		"src.type must be equal to dst");
+	assert( tri_equal(a.rows(), b.rows(), c.rows() ) );
+	assert( tri_equal(a.cols(), b.cols(), c.cols() ) );
+	assert( tri_equal(a.channels(), b.channels(), c.channels() ) );
+	assert( tri_equal(
+		a.matrix_header().type, b.matrix_header().type, c.matrix_header().type ) );
 
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
 		case type_id<T>(): \
-			fill_i( \
-				static_cast<T*>(src.data), src.dims, \
-				static_cast<T*>(dst.data_->data), dst.rows() * dst.cols()); \
+			add_i<T>( *a.data_, *b.data_, *c.data_ ); \
 			break;
 
-	switch(src.type)
+	switch( static_cast<type_id_t>(a.matrix_header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
@@ -62,11 +63,12 @@ void fill(const scalar_base& src, matrix_base& dst)
 	MATCHA_LOCAL_CASE_MACRO_TEMP(   float)
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
 	default:
-		assert(false && "src invalid type");
+		assert(false && "invalid type");
 	}
 
 	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
 }
+
 
 } // end of namespace math
 } // end of namespace matcha
