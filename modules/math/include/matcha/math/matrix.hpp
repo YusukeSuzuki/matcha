@@ -59,7 +59,7 @@ inline bool operator!=(const matrix_header& a, const matrix_header& b)
 }
 
 matrix_header create_matrix_header(
-	uint32_t rows, uint32_t cols, uint32_t type, uint32_t channels);
+	uint32_t rows, uint32_t cols, type_id_t type, uint32_t channels);
 
 typedef struct matrix_data
 {
@@ -70,22 +70,23 @@ typedef struct matrix_data
 class matrix_base
 {
 public:
-	virtual ~matrix_base() throw();
+	virtual ~matrix_base() noexcept;
 
 	uint32_t rows() const noexcept;
 	uint32_t cols() const noexcept;
 	uint32_t channels() const noexcept;
 
-	matcha::math::matrix_header matrix_header() const;
+	const matcha::math::matrix_header& matrix_header() const noexcept;
+	matcha::math::matrix_header& matrix_header() noexcept;
 
 	inline uint32_t width() const noexcept { return cols(); }
 	inline uint32_t height() const noexcept { return rows(); }
 
+	std::shared_ptr<matrix_data> data_;
 protected:
 	matrix_base(const matcha::math::matrix_header& matrixHeader);
 	matrix_base(matrix_base&& matrixBase);
 
-	std::shared_ptr<matrix_data> data_;
 
 private:
 	matrix_base(const matrix_base& matrix_base_a);
@@ -109,7 +110,10 @@ public:
 	}
 
 public:
-	matrix(uint32_t rows, uint32_t cols, type_id_t type, uint32_t channels);
+	matrix(uint32_t rows, uint32_t cols, uint32_t channels = 1) :
+		matrix_base( create_matrix_header(rows, cols, type_id<T>(), channels) )
+	{
+	}
 
 	/// @todo implement
 	virtual ~matrix() noexcept

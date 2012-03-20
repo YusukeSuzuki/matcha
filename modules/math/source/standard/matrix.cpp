@@ -16,9 +16,7 @@
  *    limitations under the License.
  */
 #include "matcha/math/matrix.hpp"
-
 #include "matcha/core/exception.hpp"
-
 #include <cstring>
 
 namespace matcha { namespace math {
@@ -67,7 +65,7 @@ static void release_matrix_data_i(matrix_data*& matrix_data_a)
 }
 
 matrix_header create_matrix_header(
-	uint32_t rows, uint32_t cols, int32_t type, uint32_t channels)
+	uint32_t rows, uint32_t cols, type_id_t type, uint32_t channels)
 {
 	assert( rows > 0 && cols > 0 && channels > 0 && channels < 5);
 
@@ -83,7 +81,8 @@ matrix_header create_matrix_header(
 		static_cast<type_id_t>(type) == type_id<  double>() ||
 		static_cast<type_id_t>(type) == type_id<   float>() ) );
 
-	matrix_header result = {rows, cols, type, channels, memory_alignment_i, 0};
+	matrix_header result =
+		{rows, cols, static_cast<int32_t>(type), channels, memory_alignment_i, 0};
 	result.row_size =
 		size_of_type(static_cast<type_id_t>(type)) * channels * cols;
 	result.data_size = result.row_size * rows;

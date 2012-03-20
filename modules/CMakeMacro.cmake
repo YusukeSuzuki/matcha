@@ -31,6 +31,7 @@ endmacro()
 
 macro (matcha_project_decraration name)
 	set(the_target "matcha_${name}")
+	set(the_target_static "matcha_${name}_static")
 	project(${the_target})
 endmacro()
 
@@ -44,24 +45,59 @@ macro (matcha_library_definition name)
 	endforeach()
 
 	add_library(${the_target} SHARED ${lib_srcs} ${ext_lib_srcs})
+	add_library(${the_target_static} STATIC ${lib_srcs} ${ext_lib_srcs})
 
 	set(BUILD_FLAGS "")
 	if(CMAKE_COMPILER_IS_GNUCXX)
 		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
 	endif()
 
-	set_source_files_properties(SOURCE ${lib_srcs} PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
-	set_source_files_properties(SOURCE ${ext_lib_srcs} PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
+	set_source_files_properties(SOURCE ${lib_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
+	set_source_files_properties(SOURCE ${ext_lib_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
 	set_target_properties(${the_target} PROPERTIES VERSION 1.0.0 SOVERSION 1)
+	set_target_properties(${the_target_static} PROPERTIES OUTPUT_NAME "${the_target}")
 
 	foreach(d ${lib_external})
 		target_link_libraries(${the_target} ${d})
+		target_link_libraries(${the_target_static} ${d})
 	endforeach()
+
+	foreach(d ${ARGN})
+		target_link_libraries(${the_target} matcha_${d})
+		target_link_libraries(${the_target_static} matcha_${d})
+	endforeach()
+
+	install(TARGETS ${the_target} DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+	install(TARGETS ${the_target_static} DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+endmacro()
+
+# --------------------------------------------------------------------------------
+macro (matcha_test_definition name)
+	set(the_target "${name}")
+	project (${the_target})
+
+	enable_testing()
+
+	foreach(d ${ARGN})
+		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../../${d}/include)
+	endforeach()
+
+	file(GLOB test_srcs "${the_target}.cpp")
+	add_executable(${the_target} ${test_srcs})
+
+	set(BUILD_FLAGS "")
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
+	endif()
+
+	set_source_files_properties(
+		SOURCE ${test_srcs} PROPERTES COMPILE_FLAGS ${BUILD_FLAGS})
 
 	foreach(d ${ARGN})
 		target_link_libraries(${the_target} matcha_${d})
 	endforeach()
 
-	install(TARGETS ${the_target} DESTINATION lib PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
+
+	add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
 endmacro()
 

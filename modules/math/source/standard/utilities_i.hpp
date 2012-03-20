@@ -15,30 +15,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_SCALAR_HPP__
-#define MATCHA_MATH_SCALAR_HPP__
-
-#include <matcha/math/types.hpp>
+#ifndef MATCHA_MATH_UTILITIES_I_HPP__
+#define MATCHA_MATH_UTILITIES_I_HPP__
 
 namespace matcha { namespace math {
 
-struct scalar_base
+template<typename T>
+inline bool tri_equal(T a, T b, T c)
 {
-	type_id_t type;
-	std::size_t dims;
-	void* data;
-};
+	return (a == b) && (b == c);
+}
 
-template<typename T, unsigned d>
-struct scalar 
-{
-	T var[d];
-
-	operator scalar_base()
-	{
-		return {type_id<T>(), d, var};
-	}
-};
 
 } // end of namespace math
 } // end of namespace matcha

@@ -16,8 +16,6 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (constants)
-add_subdirectory (scalar)
-add_subdirectory (matrix)
-add_subdirectory (linear_algebra)
+matcha_test_definition(matrix.compile math core)
+matcha_test_definition(matrix_operations math core)
 

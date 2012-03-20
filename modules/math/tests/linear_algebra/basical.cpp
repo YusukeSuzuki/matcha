@@ -15,32 +15,45 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_SCALAR_HPP__
-#define MATCHA_MATH_SCALAR_HPP__
 
+#include <matcha/math/matrix.hpp>
 #include <matcha/math/types.hpp>
+#include <matcha/math/scalar.hpp>
+#include <matcha/math/matrix_operations.hpp>
+#include <matcha/math/linear_algebra.hpp>
 
-namespace matcha { namespace math {
+#include <cstdlib>
+#include <iostream>
 
-struct scalar_base
+int
+main(int argc, char* argv[])
 {
-	type_id_t type;
-	std::size_t dims;
-	void* data;
-};
+	using namespace std;
+	using namespace matcha::math;
 
-template<typename T, unsigned d>
-struct scalar 
-{
-	T var[d];
+	const int a = 3, b = 5, c = 3 + 5;
 
-	operator scalar_base()
+	matrix<int> mat1(3,3);
+	fill(scalar<int, 1>({{a}}), mat1);
+
+	matrix<int> mat2(3,3);
+	fill(scalar<int, 1>({{b}}), mat2);
+
+	matrix<int> mat3(3,3);
+	add(mat1, mat2, mat3);
+
+	for(int row = 0; row < 3; ++row)
 	{
-		return {type_id<T>(), d, var};
+		for(int col = 0; col < 3; ++col)
+		{
+			if( mat3(row, col) != c )
+			{
+				cout << mat3(row, col) << endl;
+				exit(EXIT_FAILURE);
+			}
+		}
 	}
-};
 
-} // end of namespace math
-} // end of namespace matcha
+	return 0;
+}
 
-#endif

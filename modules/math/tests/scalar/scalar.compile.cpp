@@ -15,32 +15,21 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_SCALAR_HPP__
-#define MATCHA_MATH_SCALAR_HPP__
 
-#include <matcha/math/types.hpp>
+#include <matcha/math/scalar.hpp>
+#include <iostream>
 
-namespace matcha { namespace math {
-
-struct scalar_base
+int
+main(int argc, char* argv[])
 {
-	type_id_t type;
-	std::size_t dims;
-	void* data;
-};
+	using namespace std;
+	using namespace matcha::math;
 
-template<typename T, unsigned d>
-struct scalar 
-{
-	T var[d];
+	scalar<double, 3> sd3;
+	scalar_base sb = sd3;
 
-	operator scalar_base()
-	{
-		return {type_id<T>(), d, var};
-	}
-};
+	cout << sb.dims << endl;
 
-} // end of namespace math
-} // end of namespace matcha
+	return 0;
+}
 
-#endif

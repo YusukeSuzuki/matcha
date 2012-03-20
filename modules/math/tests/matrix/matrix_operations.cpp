@@ -15,32 +15,51 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_SCALAR_HPP__
-#define MATCHA_MATH_SCALAR_HPP__
 
+#include <matcha/math/matrix.hpp>
 #include <matcha/math/types.hpp>
+#include <matcha/math/scalar.hpp>
+#include <matcha/math/matrix_operations.hpp>
 
-namespace matcha { namespace math {
+#include <cstdlib>
+#include <iostream>
 
-struct scalar_base
+int
+main(int argc, char* argv[])
 {
-	type_id_t type;
-	std::size_t dims;
-	void* data;
-};
+	using namespace std;
+	using namespace matcha::math;
 
-template<typename T, unsigned d>
-struct scalar 
-{
-	T var[d];
+	matrix<double> mat(3,3);
 
-	operator scalar_base()
+	scalar<double, 1> scalar = {{3}};
+	fill(scalar, mat);
+
+	for(int i = 0; i < 3; ++i)
 	{
-		return {type_id<T>(), d, var};
+		for(int j = 0; j < 3; ++j)
+		{
+			if(mat(i,j) != 3)
+			{
+				exit(EXIT_FAILURE);
+			}
+		}
 	}
-};
 
-} // end of namespace math
-} // end of namespace matcha
+	scalar.var[0] = 1.25;
+	fill(scalar, mat);
 
-#endif
+	for(int i = 0; i < 3; ++i)
+	{
+		for(int j = 0; j < 3; ++j)
+		{
+			if(mat(i,j) != 1.25)
+			{
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+
+	return 0;
+}
+
