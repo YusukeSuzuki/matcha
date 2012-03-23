@@ -18,14 +18,28 @@
 #ifndef MATCHA_MATH_LINEAR_ALGEBRA_HPP__
 #define MATCHA_MATH_LINEAR_ALGEBRA_HPP__
 
+#include <matcha/math/matrix.hpp>
+
+#include <cstdint>
+
 namespace matcha { namespace math {
 
-void fill(matrix_base& dst);
+enum class transpose_option : int32_t
+{
+	normal,
+	transpose,
+	conjugate_transpose,
+};
 
 /**
  */
 void add(const matrix_base& a, const matrix_base& b, matrix_base& c);
 
+void gemm(
+	const matrix_base& a, transpose_option trans_a,
+	const matrix_base& b, transpose_option trans_b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c);
 
 } // end of namespace math
 } // end of namespace matcha
