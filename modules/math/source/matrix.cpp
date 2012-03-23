@@ -34,6 +34,11 @@ uint32_t matrix_base::channels() const noexcept
 	return data_->header.channels;
 }
 
+int32_t matrix_base::type() const noexcept
+{
+	return data_->header.type;
+}
+
 const matrix_header& matrix_base::matrix_header() const noexcept
 {
 	return data_->header;

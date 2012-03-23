@@ -75,6 +75,7 @@ public:
 	uint32_t rows() const noexcept;
 	uint32_t cols() const noexcept;
 	uint32_t channels() const noexcept;
+	int32_t type() const noexcept;
 
 	const matcha::math::matrix_header& matrix_header() const noexcept;
 	matcha::math::matrix_header& matrix_header() noexcept;
