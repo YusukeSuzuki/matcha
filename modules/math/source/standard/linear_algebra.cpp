@@ -26,7 +26,7 @@
 namespace matcha { namespace math {
 
 template<typename T>
-void add_i(
+static inline void add_i(
 	const matrix_data& a, const matrix_data& b, matrix_data& c)
 {
 	for(std::size_t i = 0;
@@ -67,6 +67,143 @@ void add(const matrix_base& a, const matrix_base& b, matrix_base& c)
 	}
 
 	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
+}
+
+template<typename T>
+static inline void gemm_na_nb_i(
+	const matrix_base& a, const matrix_base& b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+	assert( a.cols() == b.rows() );
+	assert( a.rows() == c.rows() );
+	assert( b.cols() == c.cols() );
+
+	using namespace std;
+
+	const size_t cols = c.cols();
+	const size_t rows = c.rows();
+	const size_t a_cols = a.cols();
+	const size_t channels = a.channels();
+	const size_t a_row_size = a.matrix_header().row_size;
+	const size_t b_row_size = b.matrix_header().row_size;
+	const size_t c_row_size = c.matrix_header().row_size;
+
+	const void* a_row_cur = a.data_->data;
+	const void* b_col_head_cur = b.data_->data;
+	void* c_row_cur = c.data_->data;
+
+	for(size_t row = 0; row < rows; ++row)
+	{
+		const T* b_cur = static_cast<const T*>(b_col_head_cur);
+
+		for(size_t col = 0; col < cols; ++col)
+		{
+			const T* a_cur = static_cast<const T*>(a_row_cur);
+
+			T* c_cur = static_cast<T*>(c_row_cur);
+
+			for(size_t a_col = 0; a_col < a_cols; ++a_col)
+			{
+				for(size_t channel = 0; channel < channels; ++channel)
+				{
+					*(c_cur + channel) *=
+						static_cast<T*>(beta.data)[channel];
+					*(c_cur + channel) +=
+						*static_cast<T*>(alpha.data)[channel] *
+						*(a_cur + channel) * *(b_cur + channel);
+				}
+
+				a_cur += channels;
+				static_cast<uint8_t*>(b_cur) += b_row_size;
+				c_cur += channels;
+			}
+
+			c_cur += channels;
+		}
+
+		static_cast<const uint8_t*>(a_row_cur) += a_row_size;
+		static_cast<const uint8_t*>(c_row_cur) += c_row_size;
+	}
+}
+
+static void gemm_na_nb_i(
+	const matrix_base& a, const matrix_base& b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+	assert( a.cols() == b.rows() );
+	assert( a.rows() == c.rows() );
+	assert( b.cols() == c.cols() );
+
+	using namespace std;
+
+	const size_t cols = c.cols();
+	const size_t rows = c.rows();
+
+	for(size_t col = 0; col < cols; ++col)
+	{
+		for(size_t row = 0; row < rows; ++row)
+		{
+		}
+	}
+}
+
+static void gemm_ta_nb_i(
+	const matrix_base& a, const matrix_base& b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+}
+
+static void gemm_na_tb_i(
+	const matrix_base& a, const matrix_base& b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+}
+
+static void gemm_ta_tb_i(
+	const matrix_base& a, const matrix_base& b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+}
+
+void gemm(
+	const matrix_base& a, transpose_option trans_a,
+	const matrix_base& b, transpose_option trans_b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix_base& c)
+{
+	assert(trans_a != transpose_option::conjugate_transpose && "not supported");
+	assert(trans_b != transpose_option::conjugate_transpose && "not supported");
+
+	assert( tri_equal(a.channels(), b.channels(), c.channels()) );
+	assert( tri_equal(a.type(), b.type(), c.type()) );
+
+	if(trans_a == trans_b)
+	{
+		if(trans_a == transpose_option::normal)
+		{
+			gemm_na_nb_i(a, b, alpha, beta, c);
+		}
+		else
+		{
+			gemm_ta_tb_i(a, b, alpha, beta, c);
+		}
+	}
+	else
+	{
+		if(trans_a == transpose_option::normal)
+		{
+			gemm_na_tb_i(a, b, alpha, beta, c);
+		}
+		else
+		{
+			gemm_ta_nb_i(a, b, alpha, beta, c);
+		}
+	}
 }
 
 

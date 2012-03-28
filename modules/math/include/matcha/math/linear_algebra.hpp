@@ -35,6 +35,9 @@ enum class transpose_option : int32_t
  */
 void add(const matrix_base& a, const matrix_base& b, matrix_base& c);
 
+/**
+ * c = alpha * a * b + beta + c
+ */
 void gemm(
 	const matrix_base& a, transpose_option trans_a,
 	const matrix_base& b, transpose_option trans_b,

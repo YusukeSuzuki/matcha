@@ -24,7 +24,7 @@
 namespace matcha { namespace math {
 
 template<typename T>
-void fill_i(const T src[], std::size_t dims, T* dst, std::size_t elems)
+static void fill_i(const T src[], std::size_t dims, T* dst, std::size_t elems)
 {
 	for(std::size_t i = 0; i < elems; ++i)
 	{
