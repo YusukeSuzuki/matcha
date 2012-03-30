@@ -24,7 +24,8 @@
 namespace matcha { namespace math {
 
 template<typename T>
-static void fill_i(const T src[], std::size_t dims, T* dst, std::size_t elems)
+static inline void fill_i(
+	const T src[], std::size_t dims, T* dst, std::size_t elems)
 {
 	for(std::size_t i = 0; i < elems; ++i)
 	{
@@ -63,6 +64,57 @@ void fill(const scalar_base& src, matrix_base& dst)
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
 	default:
 		assert(false && "src invalid type");
+	}
+
+	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
+}
+
+template<typename T>
+static inline void make_identity_i(
+	matrix_base& dst)
+{
+	const matrix_header header = dst.matrix_header();
+
+	T* row_cur = static_cast<T*>(dst.data_->data);
+
+	for(std::size_t row = 0; row < header.rows; ++row)
+	{
+		T* col_cur = row_cur;
+
+		for(std::size_t col = 0; col < header.cols; ++col)
+		{
+			for(std::size_t channel = 0; channel < header.channels; ++channel)
+			{
+				*(col_cur + channel) = (row == col) ? T(1) : T(0);
+			}
+
+			col_cur += header.channels;
+		}
+
+		row_cur += header.row_size / sizeof(T);
+	}
+}
+
+void
+make_identity(matrix_base& dst)
+{
+	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
+		case type_id<T>():  make_identity_i<T>( dst ); break;
+
+	switch( static_cast<type_id_t>(dst.matrix_header().type) )
+	{
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(   float)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
+	default:
+		assert(false && "dst invalid type");
 	}
 
 	#undef MATCHA_LOCAL_CASE_MACRO_TEMP

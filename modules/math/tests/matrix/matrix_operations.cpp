@@ -60,6 +60,21 @@ main(int argc, char* argv[])
 		}
 	}
 
+	matrix<double> mat2( identity<double>(3,3) );
+
+	for(int i = 0; i < 3; ++i)
+	{
+		for(int j = 0; j < 3; ++j)
+		{
+			cout << mat2(i,j) << endl;
+
+			if( (i == j) ? (mat2(i,j) != double(1)) : (mat2(i,j) != double(0)) )
+			{
+				exit(EXIT_FAILURE);
+			}
+		}
+	}
+
 	return 0;
 }
 

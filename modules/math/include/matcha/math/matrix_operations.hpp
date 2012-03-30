@@ -25,6 +25,16 @@ namespace matcha { namespace math {
 
 void fill(const scalar_base& src, matrix_base& dst);
 
+void make_identity(matrix_base& dst);
+
+template<typename T>
+matrix<T> identity(uint32_t rows, uint32_t cols, uint32_t channels = 1)
+{
+	matrix<T> result(rows, cols, channels);
+	make_identity( result );
+
+	return static_cast<matrix<T>&&>( result );
+}
 
 } // end of namespace math
 } // end of namespace matcha

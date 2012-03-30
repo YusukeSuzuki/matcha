@@ -84,10 +84,10 @@ public:
 	inline uint32_t height() const noexcept { return rows(); }
 
 	std::shared_ptr<matrix_data> data_;
+
 protected:
 	matrix_base(const matcha::math::matrix_header& matrixHeader);
 	matrix_base(matrix_base&& matrixBase);
-
 
 private:
 	matrix_base(const matrix_base& matrix_base_a);
@@ -122,7 +122,13 @@ public:
 	};
 
 	matrix(const matrix& m);
-	matrix(matrix&& m);
+
+	matrix(matrix&& m) :
+		matrix_base( static_cast<matrix<T>&&>(m) )
+	{
+	}
+
+
 	matrix& operator=(const matrix& m);
 	matrix& operator=(matrix&& m);
 
