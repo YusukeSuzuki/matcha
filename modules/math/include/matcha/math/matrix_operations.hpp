@@ -33,7 +33,7 @@ matrix<T> identity(uint32_t rows, uint32_t cols, uint32_t channels = 1)
 	matrix<T> result(rows, cols, channels);
 	make_identity( result );
 
-	return static_cast<matrix<T>&&>( result );
+	return std::move( result );
 }
 
 } // end of namespace math

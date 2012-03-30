@@ -27,6 +27,7 @@
 #include <memory>
 #include <type_traits>
 #include <typeinfo>
+#include <utility>
 
 namespace matcha { namespace math {
 
@@ -124,7 +125,7 @@ public:
 	matrix(const matrix& m);
 
 	matrix(matrix&& m) :
-		matrix_base( static_cast<matrix<T>&&>(m) )
+		matrix_base( std::forward<matrix<T>>(m) )
 	{
 	}
 
