@@ -21,6 +21,7 @@
 
 #include "utilities_i.hpp"
 
+#include <iostream>
 #include <cassert>
 
 namespace matcha { namespace math {
@@ -89,85 +90,71 @@ static inline void gemm_na_nb_i(
 	const size_t b_row_size = b.matrix_header().row_size;
 	const size_t c_row_size = c.matrix_header().row_size;
 
-	const void* a_row_cur = a.data_->data;
+	const T* a_row_cur = static_cast<const T*>(a.data_->data);
 	const void* b_col_head_cur = b.data_->data;
-	void* c_row_cur = c.data_->data;
+	T* c_row_cur = static_cast<T*>(c.data_->data);
 
 	for(size_t row = 0; row < rows; ++row)
 	{
-		const T* b_cur = static_cast<const T*>(b_col_head_cur);
+		T* c_cur = c_row_cur;
 
 		for(size_t col = 0; col < cols; ++col)
 		{
-			const T* a_cur = static_cast<const T*>(a_row_cur);
-
-			T* c_cur = static_cast<T*>(c_row_cur);
+			for(size_t channel = 0; channel < channels; ++channel)
+			{
+				*(c_cur + channel) *=
+					static_cast<T*>(beta.data)[channel];
+			}
 
 			for(size_t a_col = 0; a_col < a_cols; ++a_col)
 			{
+				const T* a_cur = a_row_cur;
+				const T* b_cur = static_cast<const T*>(b_col_head_cur);
+
 				for(size_t channel = 0; channel < channels; ++channel)
 				{
-					*(c_cur + channel) *=
-						static_cast<T*>(beta.data)[channel];
 					*(c_cur + channel) +=
-						*static_cast<T*>(alpha.data)[channel] *
+						static_cast<T*>(alpha.data)[channel] *
 						*(a_cur + channel) * *(b_cur + channel);
 				}
 
 				a_cur += channels;
-				static_cast<uint8_t*>(b_cur) += b_row_size;
-				c_cur += channels;
+				b_cur += b_row_size / sizeof(T);
 			}
 
 			c_cur += channels;
 		}
 
-		static_cast<const uint8_t*>(a_row_cur) += a_row_size;
-		static_cast<const uint8_t*>(c_row_cur) += c_row_size;
+		a_row_cur += a_row_size / sizeof(T);
+		c_row_cur += c_row_size / sizeof(T);
 	}
 }
 
-static void gemm_na_nb_i(
-	const matrix_base& a, const matrix_base& b,
-	const scalar_base& alpha, const scalar_base& beta,
-	matrix_base& c)
-{
-	assert( a.cols() == b.rows() );
-	assert( a.rows() == c.rows() );
-	assert( b.cols() == c.cols() );
-
-	using namespace std;
-
-	const size_t cols = c.cols();
-	const size_t rows = c.rows();
-
-	for(size_t col = 0; col < cols; ++col)
-	{
-		for(size_t row = 0; row < rows; ++row)
-		{
-		}
-	}
-}
-
+template<typename T>
 static void gemm_ta_nb_i(
 	const matrix_base& a, const matrix_base& b,
 	const scalar_base& alpha, const scalar_base& beta,
 	matrix_base& c)
 {
+	assert(false && "not implemented");
 }
 
+template<typename T>
 static void gemm_na_tb_i(
 	const matrix_base& a, const matrix_base& b,
 	const scalar_base& alpha, const scalar_base& beta,
 	matrix_base& c)
 {
+	assert(false && "not implemented");
 }
 
+template<typename T>
 static void gemm_ta_tb_i(
 	const matrix_base& a, const matrix_base& b,
 	const scalar_base& alpha, const scalar_base& beta,
 	matrix_base& c)
 {
+	assert(false && "not implemented");
 }
 
 void gemm(
@@ -182,28 +169,37 @@ void gemm(
 	assert( tri_equal(a.channels(), b.channels(), c.channels()) );
 	assert( tri_equal(a.type(), b.type(), c.type()) );
 
-	if(trans_a == trans_b)
+	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
+		case type_id<T>(): \
+			if(trans_a == trans_b) \
+				if(trans_a == transpose_option::normal) \
+					gemm_na_nb_i<T>(a, b, alpha, beta, c); \
+				else \
+					gemm_ta_tb_i<T>(a, b, alpha, beta, c); \
+			else \
+				if(trans_a == transpose_option::normal) \
+					gemm_na_tb_i<T>(a, b, alpha, beta, c); \
+				else \
+					gemm_ta_nb_i<T>(a, b, alpha, beta, c); \
+			break;
+
+	switch( static_cast<type_id_t>(a.matrix_header().type) )
 	{
-		if(trans_a == transpose_option::normal)
-		{
-			gemm_na_nb_i(a, b, alpha, beta, c);
-		}
-		else
-		{
-			gemm_ta_tb_i(a, b, alpha, beta, c);
-		}
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(   float)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
+	default:
+		assert(false && "invalid type");
 	}
-	else
-	{
-		if(trans_a == transpose_option::normal)
-		{
-			gemm_na_tb_i(a, b, alpha, beta, c);
-		}
-		else
-		{
-			gemm_ta_nb_i(a, b, alpha, beta, c);
-		}
-	}
+
+	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
 }
 
 

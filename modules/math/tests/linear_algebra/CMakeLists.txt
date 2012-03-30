@@ -17,4 +17,5 @@
 cmake_minimum_required(VERSION 2.6)
 
 matcha_test_definition(basical math core)
+matcha_test_definition(gemm math core)
 
