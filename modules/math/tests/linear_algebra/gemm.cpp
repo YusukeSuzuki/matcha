@@ -31,49 +31,145 @@ main(int argc, char* argv[])
 	/**
 	 * @todo write more detailed test
 	 */
-	using namespace std;
-	using namespace matcha::math;
 
-	double a = 2;
-
-	matrix<double> mat1(3,3);
-	fill(scalar<double, 1>({{a}}), mat1);
-
-	matrix<double> mat2(3,3);
-	fill(scalar<double, 1>({{0}}), mat2);
-
-	double b = 2;
-
-	mat2(0,0) = b;
-	mat2(1,1) = b;
-	mat2(2,2) = b;
-
-	for(int row = 0; row < 3; ++row)
 	{
-		for(int col = 0; col < 3; ++col) cout << mat1(row, col) << ", ";
-		cout << endl;
-	}
+		using namespace std;
+		using namespace matcha::math;
 
-	for(int row = 0; row < 3; ++row)
-	{
-		for(int col = 0; col < 3; ++col) cout << mat2(row, col) << ", ";
-		cout << endl;
-	}
+		cout << "Test normal A, normal B" << endl;
 
-	matrix<double> mat3(3,3);
-	fill(scalar<double, 1>({{0}}), mat3);
+		double a = 1;
 
-	gemm(mat1, transpose_option::normal,  mat2, transpose_option::normal,
-		scalar<double, 1>({{1}}), scalar<double, 1>({{1}}), mat3);
+		matrix<double> mat1(3,3);
+		fill(scalar<double, 1>({{0}}), mat1);
 
-	for(int row = 0; row < 3; ++row)
-	{
-		for(int col = 0; col < 3; ++col)
+		mat1(0,2) = a;
+
+		for(int row = 0; row < 3; ++row)
 		{
-			if( mat3(row, col) != (a * b * 3) )
+			cout << "mat1:";
+			for(int col = 0; col < 3; ++col)
 			{
-				cout << mat3(row, col) << endl;
-				exit(EXIT_FAILURE);
+				cout << mat1(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		matrix<double> mat2(3,3);
+		fill(scalar<double, 1>({{0}}), mat2);
+
+		double b = 2;
+
+		mat2(0,0) = b;
+		mat2(1,1) = b;
+		mat2(2,2) = b;
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat2:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat2(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		matrix<double> mat3(3,3);
+		fill(scalar<double, 1>({{0}}), mat3);
+
+		gemm(mat1, transpose_option::normal,  mat2, transpose_option::normal,
+			scalar<double, 1>({{1}}), scalar<double, 1>({{1}}), mat3);
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat3:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat3(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		for(int row = 0; row < 3; ++row)
+		{
+			for(int col = 0; col < 3; ++col)
+			{
+				if( mat3(row, col) != ( (row == 0 && col == 2) ? (a * b) : 0 )  )
+				{
+					cout << mat3(row, col) << endl;
+					exit(EXIT_FAILURE);
+				}
+			}
+		}
+	}
+
+	{
+		using namespace std;
+		using namespace matcha::math;
+
+		cout << "Test transpose A, normal B" << endl;
+
+		double a = 1;
+
+		matrix<double> mat1(3,3);
+		fill(scalar<double, 1>({{0}}), mat1);
+
+		mat1(0,2) = a;
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat1:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat1(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		matrix<double> mat2(3,3);
+		fill(scalar<double, 1>({{0}}), mat2);
+
+		double b = 2;
+
+		mat2(0,0) = b;
+		mat2(1,1) = b;
+		mat2(2,2) = b;
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat2:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat2(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		matrix<double> mat3(3,3);
+		fill(scalar<double, 1>({{0}}), mat3);
+
+		gemm(mat1, transpose_option::transpose,  mat2, transpose_option::normal,
+			scalar<double, 1>({{1}}), scalar<double, 1>({{1}}), mat3);
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat3:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat3(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		for(int row = 0; row < 3; ++row)
+		{
+			for(int col = 0; col < 3; ++col)
+			{
+				if( mat3(row, col) != ( (row == 2 && col == 0) ? (a * b) : 0 )  )
+				{
+					cout << mat3(row, col) << endl;
+					exit(EXIT_FAILURE);
+				}
 			}
 		}
 	}
