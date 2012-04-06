@@ -21,9 +21,22 @@
 #include <matcha/math/scalar.hpp>
 #include <matcha/math/matrix.hpp>
 
+#include <utility>
+
 namespace matcha { namespace math {
 
 void fill(const scalar_base& src, matrix_base& dst);
+
+void split(const matrix_base& src, matrix_base& dst, uint32_t channel);
+
+template<typename T>
+matrix<T> split(const matrix<T>& src, uint32_t channel)
+{
+	matrix<T> result(src.rows(), src.cols(), channel);
+	split(src, result, channel);
+
+	return std::move( result );
+}
 
 void make_identity(matrix_base& dst);
 

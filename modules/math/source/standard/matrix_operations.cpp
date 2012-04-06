@@ -70,6 +70,69 @@ void fill(const scalar_base& src, matrix_base& dst)
 }
 
 template<typename T>
+static inline void split_i(
+	const matrix_base& src, matrix_base& dst, uint32_t channel)
+{
+	const std::size_t rows = src.rows();
+	const std::size_t cols = src.cols();
+	const std::size_t channels = src.channels();
+	const std::size_t src_row_size = src.matrix_header().row_size;
+	const std::size_t dst_row_size = dst.matrix_header().row_size;
+
+	const T* src_row_cur = static_cast<const T*>(src.data_->data);
+	T* dst_row_cur = static_cast<T*>(dst.data_->data);
+
+	for(std::size_t row = 0; row < rows; ++row)
+	{
+		const T* src_cur = src_row_cur + channel;
+		T* dst_cur = dst_row_cur;
+
+		for(std::size_t col = 0; col < cols; ++col)
+		{
+			*dst_cur = *src_cur;
+			++dst_cur;
+			src_cur += channels;
+		}
+
+		src_row_cur += src_row_size / sizeof(T);
+		dst_row_cur += dst_row_size / sizeof(T);
+	}
+}
+
+void
+split(const matrix_base& src, matrix_base& dst, uint32_t channel)
+{
+	assert(false && "not implemented");
+
+	assert(channel < src.channels());
+	assert(dst.channels() == 1);
+	assert(src.rows() == dst.rows());
+	assert(src.cols() == dst.cols());
+	assert(src.matrix_header().type == dst.matrix_header().type);
+
+	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
+		case type_id<T>():  split_i<T>(src, dst, channel); break;
+
+	switch( static_cast<type_id_t>(src.matrix_header().type) )
+	{
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(   float)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
+	default:
+		assert(false && "dst invalid type");
+	}
+
+	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
+}
+
+template<typename T>
 static inline void make_identity_i(
 	matrix_base& dst)
 {
