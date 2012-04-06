@@ -174,6 +174,77 @@ main(int argc, char* argv[])
 		}
 	}
 
+	{
+		using namespace std;
+		using namespace matcha::math;
+
+		cout << "Test normal A, transpose B" << endl;
+
+		matrix<double> mat1(3,3);
+		fill(scalar<double, 1>({{0}}), mat1);
+
+		double b = 2;
+
+		mat1(0,0) = b;
+		mat1(1,1) = b;
+		mat1(2,2) = b;
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat1:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat1(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		double a = 1;
+
+		matrix<double> mat2(3,3);
+		fill(scalar<double, 1>({{0}}), mat2);
+
+		mat2(0,2) = a;
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat2:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat2(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		matrix<double> mat3(3,3);
+		fill(scalar<double, 1>({{0}}), mat3);
+
+		gemm(mat1, transpose_option::normal,  mat2, transpose_option::transpose,
+			scalar<double, 1>({{1}}), scalar<double, 1>({{1}}), mat3);
+
+		for(int row = 0; row < 3; ++row)
+		{
+			cout << "mat3:";
+			for(int col = 0; col < 3; ++col)
+			{
+				cout << mat3(row, col) << ", ";
+			}
+			cout << endl;
+		}
+
+		for(int row = 0; row < 3; ++row)
+		{
+			for(int col = 0; col < 3; ++col)
+			{
+				if( mat3(row, col) != ( (row == 2 && col == 0) ? (a * b) : 0 )  )
+				{
+					cout << mat3(row, col) << endl;
+					exit(EXIT_FAILURE);
+				}
+			}
+		}
+	}
+
 	return 0;
 }
 

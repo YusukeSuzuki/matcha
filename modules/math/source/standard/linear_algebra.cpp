@@ -205,7 +205,59 @@ static void gemm_na_tb_i(
 	const scalar_base& alpha, const scalar_base& beta,
 	matrix_base& c)
 {
-	assert(false && "not implemented");
+	assert( a.rows() == b.rows() );
+	assert( a.cols() == b.cols() );
+	assert( a.rows() == c.rows() );
+	assert( b.rows() == c.cols() );
+
+	using namespace std;
+
+	const size_t cols = c.cols();
+	const size_t rows = c.rows();
+	const size_t a_cols = a.cols();
+	const size_t channels = a.channels();
+	const size_t a_row_size = a.matrix_header().row_size;
+	const size_t b_row_size = b.matrix_header().row_size;
+	const size_t c_row_size = c.matrix_header().row_size;
+	const T* a_row_cur = static_cast<const T*>(a.data_->data);
+	T* c_row_cur = static_cast<T*>(c.data_->data);
+
+	for(size_t row = 0; row < rows; ++row)
+	{
+		const T* b_row_cur = static_cast<const T*>(b.data_->data);
+		T* c_cur = c_row_cur;
+
+		for(size_t col = 0; col < cols; ++col)
+		{
+			for(size_t channel = 0; channel < channels; ++channel)
+			{
+				*(c_cur + channel) *=
+					static_cast<T*>(beta.data)[channel];
+			}
+
+			const T* a_cur = a_row_cur;
+			const T* b_cur = b_row_cur;
+
+			for(size_t a_col = 0; a_col < a_cols; ++a_col)
+			{
+				for(size_t channel = 0; channel < channels; ++channel)
+				{
+					*(c_cur + channel) +=
+						static_cast<T*>(alpha.data)[channel] *
+						*(a_cur + channel) * *(b_cur + channel);
+				}
+
+				a_cur += channels;
+				b_cur += channels;
+			}
+
+			b_row_cur += b_row_size / sizeof(T);
+			c_cur += channels;
+		}
+
+		a_row_cur += a_row_size / sizeof(T);
+		c_row_cur += c_row_size / sizeof(T);
+	}
 }
 
 template<typename T>
