@@ -16,6 +16,19 @@
  *    limitations under the License.
  */
 
+#define USE_LIB true
+
+#define BOOST_TEST_MODULE matrix_operations
+
+#if USE_LIB
+	#define BOOST_TEST_DYN_LINK
+	#include <boost/test/unit_test.hpp>
+#else
+	#define BOOST_TEST_NO_LIB
+	#define BOOST_TEST_MAIN 1
+	#include <boost/test/included/unit_test.hpp>
+#endif
+
 #include <matcha/math/matrix.hpp>
 #include <matcha/math/types.hpp>
 #include <matcha/math/scalar.hpp>
@@ -24,8 +37,7 @@
 #include <cstdlib>
 #include <iostream>
 
-int
-main(int argc, char* argv[])
+BOOST_AUTO_TEST_CASE( fill_0 )
 {
 	using namespace std;
 	using namespace matcha::math;
@@ -39,42 +51,44 @@ main(int argc, char* argv[])
 	{
 		for(int j = 0; j < 3; ++j)
 		{
-			if(mat(i,j) != 3)
-			{
-				exit(EXIT_FAILURE);
-			}
+			BOOST_CHECK_EQUAL( mat(i,j), 3 );
 		}
 	}
+}
 
-	scalar.var[0] = 1.25;
+BOOST_AUTO_TEST_CASE( fill_1 )
+{
+	using namespace std;
+	using namespace matcha::math;
+
+	matrix<double> mat(3,3);
+
+	scalar<double, 1> scalar = {{1.25}};
 	fill(scalar, mat);
 
 	for(int i = 0; i < 3; ++i)
 	{
 		for(int j = 0; j < 3; ++j)
 		{
-			if(mat(i,j) != 1.25)
-			{
-				exit(EXIT_FAILURE);
-			}
+			BOOST_CHECK_EQUAL( mat(i,j), 1.25 );
 		}
 	}
+}
 
-	matrix<double> mat2( identity<double>(3,3) );
+BOOST_AUTO_TEST_CASE( identity_0 )
+{
+	using namespace std;
+	using namespace matcha::math;
+
+	matrix<double> mat( identity<double>(3,3) );
 
 	for(int i = 0; i < 3; ++i)
 	{
 		for(int j = 0; j < 3; ++j)
 		{
-			cout << mat2(i,j) << endl;
-
-			if( (i == j) ? (mat2(i,j) != double(1)) : (mat2(i,j) != double(0)) )
-			{
-				exit(EXIT_FAILURE);
-			}
+			cout << mat(i,j) << endl;
+			BOOST_CHECK_EQUAL( mat(i,j), i == j ?  double(1) : double(0) );
 		}
 	}
-
-	return 0;
 }
 

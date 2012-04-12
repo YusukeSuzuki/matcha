@@ -97,6 +97,7 @@ macro (matcha_test_definition name)
 		target_link_libraries(${the_target} matcha_${d})
 	endforeach()
 
+	target_link_libraries(${the_target} boost_unit_test_framework)
 
 	add_test(${the_target} ${CMAKE_CURRENT_BINARY_DIR}/${the_target})
 endmacro()
