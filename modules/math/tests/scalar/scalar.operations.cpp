@@ -50,3 +50,22 @@ BOOST_AUTO_TEST_CASE( add_0 )
 	BOOST_CHECK_EQUAL( c[1], 6 );
 }
 
+BOOST_AUTO_TEST_CASE( add_1 )
+{
+	using namespace matcha;
+
+	math::scalar<double, 3> a;
+	a[0] = 1;
+	a[1] = 2;
+	a[2] = -2;
+	math::scalar<double, 3> b;
+	b[0] = 3;
+	b[1] = 4;
+	b[2] = 7;
+
+	auto c = add(a, b);
+	BOOST_CHECK_EQUAL( c[0], 4 );
+	BOOST_CHECK_EQUAL( c[1], 6 );
+	BOOST_CHECK_EQUAL( c[2], 5 );
+}
+

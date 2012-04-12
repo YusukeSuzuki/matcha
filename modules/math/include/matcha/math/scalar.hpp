@@ -52,16 +52,20 @@ struct scalar
 	}
 };
 
+template<typename T, unsigned d, unsigned i, unsigned j = i-1 ? i-1 : 1>
+T add(const scalar<T,d>& a, const scalar<T,d>& b, scalar<T,d>& c)
+{
+	return c[i-1] = (i-1) ? (add<T,d,j>(a,b,c), a[j]+b[j]) : a[i-1] + b[i-1];
+}
+
 template<typename T, unsigned d>
 scalar<T,d> add(const scalar<T,d>& a, const scalar<T,d>& b)
 {
+	/**
+	 * @todo more efficient implementation
+	 */
 	scalar<T,d> c;
-
-	for(unsigned i = 0; i < d; ++i)
-	{
-		c[i] = a[i] + b[i];
-	}
-
+	add<T,d,d>(a,b,c);
 	return std::move(c);
 }
 
