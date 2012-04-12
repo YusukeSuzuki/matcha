@@ -20,6 +20,8 @@
 
 #include <matcha/math/types.hpp>
 
+#include <utility>
+
 namespace matcha { namespace math {
 
 struct scalar_base
@@ -38,7 +40,30 @@ struct scalar
 	{
 		return {type_id<T>(), d, var};
 	}
+
+	T& operator[](unsigned i)
+	{
+		return var[i];
+	}
+
+	const T& operator[](unsigned i) const
+	{
+		return var[i];
+	}
 };
+
+template<typename T, unsigned d>
+scalar<T,d> add(const scalar<T,d>& a, const scalar<T,d>& b)
+{
+	scalar<T,d> c;
+
+	for(unsigned i = 0; i < d; ++i)
+	{
+		c[i] = a[i] + b[i];
+	}
+
+	return std::move(c);
+}
 
 } // end of namespace math
 } // end of namespace matcha

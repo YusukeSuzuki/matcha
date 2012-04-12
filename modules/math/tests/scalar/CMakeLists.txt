@@ -17,4 +17,5 @@
 cmake_minimum_required(VERSION 2.6)
 
 matcha_test_definition(scalar.compile math core)
+matcha_test_definition(scalar.operations math core)
 
