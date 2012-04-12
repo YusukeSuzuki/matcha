@@ -25,10 +25,19 @@
 
 namespace matcha { namespace math {
 
+/**
+ * fill matrix with scalar value 
+ */
 void fill(const scalar_base& src, matrix_base& dst);
 
+/**
+ * split matrix
+ */
 void split(const matrix_base& src, matrix_base& dst, uint32_t channel);
 
+/**
+ * return splitted matrix
+ */
 template<typename T>
 matrix<T> split(const matrix<T>& src, uint32_t channel)
 {
@@ -38,8 +47,14 @@ matrix<T> split(const matrix<T>& src, uint32_t channel)
 	return std::move( result );
 }
 
+/**
+ * make matrix identity matrix
+ */
 void make_identity(matrix_base& dst);
 
+/**
+ * return identity matrix
+ */
 template<typename T>
 matrix<T> identity(uint32_t rows, uint32_t cols, uint32_t channels = 1)
 {
