@@ -47,8 +47,12 @@ macro (matcha_library_definition name)
 	add_library(${the_target} SHARED ${lib_srcs} ${ext_lib_srcs})
 	add_library(${the_target_static} STATIC ${lib_srcs} ${ext_lib_srcs})
 
+
 	set(BUILD_FLAGS "")
 	if(CMAKE_COMPILER_IS_GNUCXX)
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
+	endif()
+	if(CMAKE_CXX_COMPILER MATCHES ".*clang\\+\\+.*")
 		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
 	endif()
 
@@ -88,6 +92,9 @@ macro (matcha_test_definition name)
 	set(BUILD_FLAGS "")
 	if(CMAKE_COMPILER_IS_GNUCXX)
 		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -fpermissive -g")
+	endif()
+	if(CMAKE_CXX_COMPILER MATCHES ".*clang\\+\\+.*")
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
 	endif()
 
 	set_source_files_properties(
