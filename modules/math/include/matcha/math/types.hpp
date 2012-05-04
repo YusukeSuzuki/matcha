@@ -54,11 +54,12 @@ template<typename T>
 constexpr type_id_t type_id()
 {
 	static_assert(is_supported_type<T>(), "not supported");
-	return -1;
+	return type_id_t::unsupported;
 }
 
 #define MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(X,Y) \
 	template<> constexpr type_id_t type_id<X>(){ return type_id_t::Y; }
+
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  int8_t,   int8_id);
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( uint8_t,  uint8_id);
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO( int16_t,  int16_id);
@@ -69,6 +70,7 @@ constexpr type_id_t type_id()
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(uint64_t, uint64_id);
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(   float,  float_id);
 	MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO(  double, double_id);
+
 #undef MATCHA_TYPE_ID_DECRARATION_TEMP_MACRO
 
 template<typename T>
