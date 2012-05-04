@@ -24,6 +24,8 @@ namespace matcha { namespace image {
 
 using namespace math;
 
+void make_integral(const image::matrix_base& src, image::matrix_base& dst);
+
 } // end of namespace image
 } // end of namespace matcha
 

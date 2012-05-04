@@ -17,7 +17,18 @@
  */
 #include "matcha/image/image.hpp"
 
+#include <cassert>
+
 namespace matcha { namespace image {
+
+void
+make_integral(const image::matrix_base& src, image::matrix_base& dst)
+{
+	/**
+	 * @warning not implemented
+	 */
+	assert(false && "not implemented");
+}
 
 } // end of namespace image
 } // end of namespace matcha
