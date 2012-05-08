@@ -40,7 +40,7 @@ void fill(const scalar_base& src, matrix_base& dst)
 {
 	assert(
 		src.dims == dst.channels() && "src.dims must be equal to dst.channels()");
-	assert(src.type == static_cast<type_id_t>(dst.matrix_header().type) &&
+	assert(src.type == static_cast<type_id_t>(dst.header().type) &&
 		"src.type must be equal to dst");
 
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
@@ -76,8 +76,8 @@ static inline void split_i(
 	const std::size_t rows = src.rows();
 	const std::size_t cols = src.cols();
 	const std::size_t channels = src.channels();
-	const std::size_t src_row_size = src.matrix_header().row_size;
-	const std::size_t dst_row_size = dst.matrix_header().row_size;
+	const std::size_t src_row_size = src.header().row_size;
+	const std::size_t dst_row_size = dst.header().row_size;
 
 	const T* src_row_cur = static_cast<const T*>(src.data_->data);
 	T* dst_row_cur = static_cast<T*>(dst.data_->data);
@@ -108,12 +108,12 @@ split(const matrix_base& src, matrix_base& dst, uint32_t channel)
 	assert(dst.channels() == 1);
 	assert(src.rows() == dst.rows());
 	assert(src.cols() == dst.cols());
-	assert(src.matrix_header().type == dst.matrix_header().type);
+	assert(src.header().type == dst.header().type);
 
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
 		case type_id<T>():  split_i<T>(src, dst, channel); break;
 
-	switch( static_cast<type_id_t>(src.matrix_header().type) )
+	switch( static_cast<type_id_t>(src.header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
@@ -136,7 +136,7 @@ template<typename T>
 static inline void make_identity_i(
 	matrix_base& dst)
 {
-	const matrix_header header = dst.matrix_header();
+	const matrix_header header = dst.header();
 
 	T* row_cur = static_cast<T*>(dst.data_->data);
 
@@ -164,7 +164,7 @@ make_identity(matrix_base& dst)
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
 		case type_id<T>():  make_identity_i<T>( dst ); break;
 
-	switch( static_cast<type_id_t>(dst.matrix_header().type) )
+	switch( static_cast<type_id_t>(dst.header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)

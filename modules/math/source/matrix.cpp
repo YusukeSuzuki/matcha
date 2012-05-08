@@ -39,12 +39,12 @@ int32_t matrix_base::type() const noexcept
 	return data_->header.type;
 }
 
-const matrix_header& matrix_base::matrix_header() const noexcept
+const matrix_header& matrix_base::header() const noexcept
 {
 	return data_->header;
 }
 
-matrix_header& matrix_base::matrix_header() noexcept
+matrix_header& matrix_base::header() noexcept
 {
 	return data_->header;
 }

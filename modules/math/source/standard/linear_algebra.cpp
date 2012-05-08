@@ -47,15 +47,14 @@ void add(const matrix_base& a, const matrix_base& b, matrix_base& c)
 	assert( tri_equal(a.rows(), b.rows(), c.rows() ) );
 	assert( tri_equal(a.cols(), b.cols(), c.cols() ) );
 	assert( tri_equal(a.channels(), b.channels(), c.channels() ) );
-	assert( tri_equal(
-		a.matrix_header().type, b.matrix_header().type, c.matrix_header().type ) );
+	assert( tri_equal(a.header().type, b.header().type, c.header().type ) );
 
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
 		case type_id<T>(): \
 			add_i<T>( *a.data_, *b.data_, *c.data_ ); \
 			break;
 
-	switch( static_cast<type_id_t>(a.matrix_header().type) )
+	switch( static_cast<type_id_t>(a.header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
@@ -94,15 +93,14 @@ void sub(const matrix_base& a, const matrix_base& b, matrix_base& c)
 	assert( tri_equal(a.rows(), b.rows(), c.rows() ) );
 	assert( tri_equal(a.cols(), b.cols(), c.cols() ) );
 	assert( tri_equal(a.channels(), b.channels(), c.channels() ) );
-	assert( tri_equal(
-		a.matrix_header().type, b.matrix_header().type, c.matrix_header().type ) );
+	assert( tri_equal(a.header().type, b.header().type, c.header().type ) );
 
 	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
 		case type_id<T>(): \
 			sub_i<T>( *a.data_, *b.data_, *c.data_ ); \
 			break;
 
-	switch( static_cast<type_id_t>(a.matrix_header().type) )
+	switch( static_cast<type_id_t>(a.header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
@@ -140,9 +138,9 @@ static inline void gemm_na_nb_i(
 	const size_t rows = c.rows();
 	const size_t a_cols = a.cols();
 	const size_t channels = a.channels();
-	const size_t a_row_size = a.matrix_header().row_size;
-	const size_t b_row_size = b.matrix_header().row_size;
-	const size_t c_row_size = c.matrix_header().row_size;
+	const size_t a_row_size = a.header().row_size;
+	const size_t b_row_size = b.header().row_size;
+	const size_t c_row_size = c.header().row_size;
 
 	const T* a_row_cur = static_cast<const T*>(a.data_->data);
 	T* c_row_cur = static_cast<T*>(c.data_->data);
@@ -202,9 +200,9 @@ static void gemm_ta_nb_i(
 	const size_t rows = c.rows();
 	const size_t a_rows = a.rows();
 	const size_t channels = a.channels();
-	const size_t a_row_size = a.matrix_header().row_size;
-	const size_t b_row_size = b.matrix_header().row_size;
-	const size_t c_row_size = c.matrix_header().row_size;
+	const size_t a_row_size = a.header().row_size;
+	const size_t b_row_size = b.header().row_size;
+	const size_t c_row_size = c.header().row_size;
 	const T* a_col_head = static_cast<T*>(a.data_->data);
 	T* c_row_cur = static_cast<T*>(c.data_->data);
 
@@ -263,9 +261,9 @@ static void gemm_na_tb_i(
 	const size_t rows = c.rows();
 	const size_t a_cols = a.cols();
 	const size_t channels = a.channels();
-	const size_t a_row_size = a.matrix_header().row_size;
-	const size_t b_row_size = b.matrix_header().row_size;
-	const size_t c_row_size = c.matrix_header().row_size;
+	const size_t a_row_size = a.header().row_size;
+	const size_t b_row_size = b.header().row_size;
+	const size_t c_row_size = c.header().row_size;
 	const T* a_row_cur = static_cast<const T*>(a.data_->data);
 	T* c_row_cur = static_cast<T*>(c.data_->data);
 
@@ -342,7 +340,7 @@ void gemm(
 					gemm_ta_nb_i<T>(a, b, alpha, beta, c); \
 			break;
 
-	switch( static_cast<type_id_t>(a.matrix_header().type) )
+	switch( static_cast<type_id_t>(a.header().type) )
 	{
 	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
 	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
