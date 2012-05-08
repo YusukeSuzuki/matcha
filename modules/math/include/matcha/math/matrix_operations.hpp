@@ -41,7 +41,7 @@ void split(const matrix_base& src, matrix_base& dst, uint32_t channel);
 template<typename T>
 matrix<T> split(const matrix<T>& src, uint32_t channel)
 {
-	matrix<T> result(src.rows(), src.cols(), channel);
+	matrix<T> result(src.rows(), src.cols(), 1);
 	split(src, result, channel);
 
 	return std::move( result );
