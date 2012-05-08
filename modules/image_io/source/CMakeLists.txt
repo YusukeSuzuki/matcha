@@ -16,18 +16,17 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-include(CMakeMacro.cmake NO_POLICY_SCOPE)
+matcha_project_decraration(image_io)
 
-add_subdirectory (core)
-#add_subdirectory (utilities)
-#add_subdirectory (application)
-add_subdirectory (math)
-add_subdirectory (image)
-add_subdirectory (image_io)
-#add_subdirectory (process)
-#add_subdirectory (device)
-#add_subdirectory (experimental)
-#add_subdirectory (opencl)
-#add_subdirectory (math.opencl)
-#add_subdirectory (image.opencl)
+file(GLOB lib_srcs "*.cpp")
+
+set(Implementation "linux" CACHE STRING "image: Implementation(linux)")
+
+if(${Implementation} STREQUAL "standard")
+	file(GLOB ext_lib_srcs "linux/*.cpp")
+else()
+endif()
+
+set(lib_external stdc++ m)
+matcha_library_definition(image_io core math image)
 

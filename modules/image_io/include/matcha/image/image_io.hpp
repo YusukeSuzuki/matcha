@@ -15,25 +15,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_IMAGE_HPP__
-#define MATCHA_IMAGE_HPP__
+#ifndef MATCHA_IMAGE_IMAGE_IO_HPP__
+#define MATCHA_IMAGE_IMAGE_IO_HPP__
 
-#include <matcha/math/matrix.hpp>
+#include <matcha/image/image.hpp>
+
+#include <string>
 
 namespace matcha { namespace image {
 
-using namespace math;
-using image_base = matrix_base;
-template<typename T> using image = matrix<T>;
-
-enum class color_space
+template<typename T>
+image<T> load_png(const std::string& path, color_space color)
 {
-	grayscale,
-	rgb,
-	rgba
-};
+	static_assert( is_supported_type<T>(), "T is not supported" );
+	return image<T>(1,1,1);
+}
 
-void make_integral(const image_base& src, image_base& dst);
+void save_png(const std::string& path, const image_base& img);
 
 } // end of namespace image
 } // end of namespace matcha

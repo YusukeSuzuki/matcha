@@ -129,7 +129,6 @@ public:
 	{
 	}
 
-
 	matrix& operator=(const matrix& m);
 	matrix& operator=(matrix&& m);
 

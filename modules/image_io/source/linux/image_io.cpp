@@ -15,27 +15,12 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_IMAGE_HPP__
-#define MATCHA_IMAGE_HPP__
+#include "matcha/image/image_io.hpp"
 
-#include <matcha/math/matrix.hpp>
+#include <cassert>
 
 namespace matcha { namespace image {
-
-using namespace math;
-using image_base = matrix_base;
-template<typename T> using image = matrix<T>;
-
-enum class color_space
-{
-	grayscale,
-	rgb,
-	rgba
-};
-
-void make_integral(const image_base& src, image_base& dst);
 
 } // end of namespace image
 } // end of namespace matcha
 
-#endif
