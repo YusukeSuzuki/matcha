@@ -16,7 +16,5 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (source)
-matcha_header_install_definition(image)
-add_subdirectory (tests)
+add_subdirectory (image)
 

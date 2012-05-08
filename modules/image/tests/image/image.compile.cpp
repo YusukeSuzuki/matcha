@@ -15,20 +15,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_IMAGE_HPP__
-#define MATCHA_IMAGE_HPP__
 
-#include <matcha/math/matrix.hpp>
+#include <matcha/image/image.hpp>
 
-namespace matcha { namespace image {
+int
+main(int argc, char* argv[])
+{
+	using namespace std;
+	using namespace matcha::image;
 
-using namespace math;
-using image_base = matrix_base;
-template<typename T> using image = matrix<T>;
+	image<double> mat(3,3);
 
-void make_integral(const image::matrix_base& src, image::matrix_base& dst);
+	return 0;
+}
 
-} // end of namespace image
-} // end of namespace matcha
-
-#endif

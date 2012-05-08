@@ -16,7 +16,5 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (source)
-matcha_header_install_definition(image)
-add_subdirectory (tests)
+matcha_test_definition(image.compile image math core)
 
