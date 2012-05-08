@@ -21,6 +21,7 @@
 #include <matcha/math/matrix.hpp>
 
 #include <cstdint>
+#include <utility>
 
 namespace matcha { namespace math {
 
@@ -32,8 +33,36 @@ enum class transpose_option : int32_t
 };
 
 /**
+ * c = a + b
  */
 void add(const matrix_base& a, const matrix_base& b, matrix_base& c);
+
+/**
+ * return a + b
+ */
+template<typename T>
+matrix<T> add(const matrix<T>& a, const matrix<T>& b)
+{
+	matrix<T> c(a.rows(), a.cols(), a.channels());
+	add(a, b, c);
+	return std::move(c);
+}
+
+/**
+ * c = a - b
+ */
+void sub(const matrix_base& a, const matrix_base& b, matrix_base& c);
+
+/**
+ * return a - b
+ */
+template<typename T>
+matrix<T> sub(const matrix<T>& a, const matrix<T>& b)
+{
+	matrix<T> c(a.rows(), a.cols(), a.channels());
+	sub(a, b, c);
+	return std::move(c);
+}
 
 /**
  * c = alpha * a * b + beta + c

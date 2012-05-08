@@ -75,6 +75,53 @@ void add(const matrix_base& a, const matrix_base& b, matrix_base& c)
 }
 
 // ----------------------------------------------------------------------
+// sub 
+// ----------------------------------------------------------------------
+template<typename T>
+static inline void sub_i(
+	const matrix_data& a, const matrix_data& b, matrix_data& c)
+{
+	for(std::size_t i = 0;
+		i < (a.header.rows * a.header.cols * a.header.channels); ++i)
+	{
+		static_cast<T*>(c.data)[i] =
+			static_cast<const T*>(a.data)[i] + static_cast<const T*>(b.data)[i];
+	}
+}
+
+void sub(const matrix_base& a, const matrix_base& b, matrix_base& c)
+{
+	assert( tri_equal(a.rows(), b.rows(), c.rows() ) );
+	assert( tri_equal(a.cols(), b.cols(), c.cols() ) );
+	assert( tri_equal(a.channels(), b.channels(), c.channels() ) );
+	assert( tri_equal(
+		a.matrix_header().type, b.matrix_header().type, c.matrix_header().type ) );
+
+	#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
+		case type_id<T>(): \
+			sub_i<T>( *a.data_, *b.data_, *c.data_ ); \
+			break;
+
+	switch( static_cast<type_id_t>(a.matrix_header().type) )
+	{
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  int8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( uint8_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint16_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint32_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP( int64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(uint64_t)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(   float)
+	MATCHA_LOCAL_CASE_MACRO_TEMP(  double)
+	default:
+		assert(false && "invalid type");
+	}
+
+	#undef MATCHA_LOCAL_CASE_MACRO_TEMP
+}
+
+// ----------------------------------------------------------------------
 // gemm
 // ----------------------------------------------------------------------
 template<typename T>
