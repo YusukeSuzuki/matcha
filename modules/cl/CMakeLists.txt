@@ -16,23 +16,7 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-include(CMakeMacro.cmake NO_POLICY_SCOPE)
-
-add_subdirectory (core)
-#add_subdirectory (utilities)
-#add_subdirectory (application)
-add_subdirectory (math)
-add_subdirectory (image)
-#add_subdirectory (image_io)
-add_subdirectory (cl)
-#add_subdirectory (process)
-#add_subdirectory (device)
-#add_subdirectory (experimental)
-#add_subdirectory (opencl)
-#add_subdirectory (math.opencl)
-#add_subdirectory (image.opencl)
-
-set(CPACK_GENERATOR "DEB")
-set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Yusuke Suzuki")
-include(CPack)
+add_subdirectory (source)
+matcha_header_install_definition(cl)
+add_subdirectory (tests)
 
