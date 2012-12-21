@@ -15,8 +15,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef __MATCAH_CORE_EXCEPTION_H_
-#define __MATCAH_CORE_EXCEPTION_H_
+#ifndef __MATCAH_CORE_TYPE_ARRAY_H_
+#define __MATCAH_CORE_TYPE_ARRAY_H_
 
 #include <tuple>
 #include <type_traits>

@@ -16,7 +16,6 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (optional)
-add_subdirectory (type_array)
-
+matcha_test_definition(optional.simple_test core)
+matcha_test_definition(optional.compile core)
 
