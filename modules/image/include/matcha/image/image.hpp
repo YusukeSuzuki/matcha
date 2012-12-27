@@ -30,7 +30,9 @@ enum class color_space
 {
 	grayscale,
 	rgb,
-	rgba
+	rgba,
+	bgr,
+	bgra
 };
 
 void make_integral(const image_base& src, image_base& dst);
