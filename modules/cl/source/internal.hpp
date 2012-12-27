@@ -20,6 +20,8 @@
 
 #include "matcha/cl/cl.hpp"
 
+#include <algorithm>
+
 namespace matcha { namespace cl {
 
 class device::implementation
@@ -37,6 +39,18 @@ public:
 	cl_device_id id() const
 	{
 		return id_;
+	}
+
+	static std::vector<cl_device_id> to_device_ids(
+		const std::vector<device>& devices)
+	{
+		std::vector<cl_device_id> ids(devices.size());
+
+		std::transform(devices.begin(), devices.end(),
+			ids.begin(), [](const device& device) -> cl_device_id {
+				return device.implementation_->id(); });
+
+		return ids;
 	}
 
 	static cl_device_type to_device_type(device::type t)
@@ -221,10 +235,6 @@ public:
 	{
 	}
 
-	~implementation() noexcept
-	{
-	}
-
 	cl_platform_id id() const
 	{
 		return id_;
@@ -251,6 +261,50 @@ public:
 
 private:
 	cl_platform_id id_;
+};
+
+class program::implementation
+{
+public:
+	implementation();
+
+	static cl_program_info to_program_info(program::info_name i)
+	{
+		#ifdef MATCHA_INFO_PARAMETER_TEMP_MACRO
+		#error "macro error"
+		#else
+		#define MATCHA_INFO_PARAMETER_TEMP_MACRO(X,Y) \
+			case program::info_name::X: return Y;
+
+		switch(i)
+		{
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(reference_count, CL_PROGRAM_REFERENCE_COUNT)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(context, CL_PROGRAM_CONTEXT)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(num_devices, CL_PROGRAM_NUM_DEVICES)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(devices, CL_PROGRAM_DEVICES)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(source, CL_PROGRAM_SOURCE)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(binary_sizes, CL_PROGRAM_BINARY_SIZES)
+		MATCHA_INFO_PARAMETER_TEMP_MACRO(binaries, CL_PROGRAM_BINARIES)
+		}
+
+		#undef MATCHA_INFO_PARAMETER_TEMP_MACRO
+		#endif
+
+		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), CL_INVALID_VALUE) );
+	}
+
+	cl_program program() const
+	{
+		return program_;
+	}
+
+	operator cl_program()
+	{
+		return program_;
+	}
+
+private:
+	cl_program program_;
 };
 
 } // end of namespace Core
