@@ -38,6 +38,15 @@ enum class transpose_option : int32_t
 void add(const matrix_base& a, const matrix_base& b, matrix_base& c);
 
 /**
+ * c = a + b
+ */
+template<typename T>
+void add(const matrix<T>& a, const matrix<T>& b, matrix<T>& c)
+{
+	add(a.base(), b.base(), c.base());
+}
+
+/**
  * return a + b
  */
 template<typename T>
@@ -54,13 +63,22 @@ matrix<T> add(const matrix<T>& a, const matrix<T>& b)
 void sub(const matrix_base& a, const matrix_base& b, matrix_base& c);
 
 /**
+ * c = a - b
+ */
+template<typename T>
+void sub(const matrix<T>& a, const matrix<T>& b, matrix<T>& c)
+{
+	sub(a.base(), b.base(), c.base());
+}
+
+/**
  * return a - b
  */
 template<typename T>
 matrix<T> sub(const matrix<T>& a, const matrix<T>& b)
 {
 	matrix<T> c(a.rows(), a.cols(), a.channels());
-	sub(a, b, c);
+	sub(a.base(), b.base(), c.base());
 	return std::move(c);
 }
 
@@ -72,6 +90,19 @@ void gemm(
 	const matrix_base& b, transpose_option trans_b,
 	const scalar_base& alpha, const scalar_base& beta,
 	matrix_base& c);
+
+/**
+ * c = alpha * a * b + beta + c
+ */
+template<typename T>
+void gemm(
+	const matrix<T>& a, transpose_option trans_a,
+	const matrix<T>& b, transpose_option trans_b,
+	const scalar_base& alpha, const scalar_base& beta,
+	matrix<T>& c)
+{
+	gemm(a.base(), trans_a, b.base(), trans_b, alpha, beta, c.base());
+}
 
 } // end of namespace math
 } // end of namespace matcha

@@ -71,6 +71,9 @@ typedef struct matrix_data
 class matrix_base
 {
 public:
+	matrix_base(const matcha::math::matrix_header& header);
+	matrix_base(matrix_base&& matrixBase);
+
 	virtual ~matrix_base() noexcept;
 
 	uint32_t rows() const noexcept;
@@ -81,14 +84,7 @@ public:
 	const matcha::math::matrix_header& header() const noexcept;
 	matcha::math::matrix_header& header() noexcept;
 
-	inline uint32_t width() const noexcept { return cols(); }
-	inline uint32_t height() const noexcept { return rows(); }
-
 	std::shared_ptr<matrix_data> data_;
-
-protected:
-	matrix_base(const matcha::math::matrix_header& matrixHeader);
-	matrix_base(matrix_base&& matrixBase);
 
 private:
 	matrix_base(const matrix_base& matrix_base_a);
@@ -96,36 +92,50 @@ private:
 };
 
 template<typename T>
-class matrix : public matrix_base
+class matrix
 {
 public:
 	typedef T type;
 
 	std::shared_ptr<matcha::math::matrix_data> matrix_data()
 	{
-		return data_;
+		return base.data_;
 	}
 
 	const std::shared_ptr<matcha::math::matrix_data> matrix_data() const
 	{
-		return data_;
+		return base.data_;
 	}
 
 public:
-	matrix(uint32_t rows, uint32_t cols, uint32_t channels = 1) :
-		matrix_base( create_matrix_header(rows, cols, type_id<T>(), channels) )
+	matrix(uint32_t rows, uint32_t cols) :
+		base_( create_matrix_header(rows, cols, type_id<T>(), 1) )
 	{
 	}
 
-	/// @todo implement
-	virtual ~matrix() noexcept
+	matrix(uint32_t rows, uint32_t cols, uint32_t channels) :
+		base_( create_matrix_header(rows, cols, type_id<T>(), channels) )
+	{
+	}
+
+	~matrix() noexcept
 	{
 	};
 
 	matrix(const matrix& m);
 
 	matrix(matrix&& m) :
-		matrix_base( std::forward<matrix<T>>(m) )
+		base_( std::forward<matrix_base>(m.base_) )
+	{
+	}
+
+	matrix(const matrix_base& base) :
+		base_(base)
+	{
+	}
+
+	matrix(matrix_base&& base) :
+		base_( std::forward<matrix_base>(base) )
 	{
 	}
 
@@ -133,62 +143,101 @@ public:
 	matrix& operator=(matrix&& m);
 
 public:
+	uint32_t rows() const noexcept
+	{
+		return base_.rows();
+	}
+
+	uint32_t cols() const noexcept
+	{
+		return base_.cols();
+	}
+
+	uint32_t channels() const noexcept
+	{
+		return base_.channels();
+	}
+
+	uint32_t width() const noexcept
+	{
+		return cols();
+	}
+
+	uint32_t height() const noexcept
+	{
+		return rows();
+	}
+
 	type get(uint32_t row, uint32_t col, uint32_t channel)
 	{
-		assert( (row < data_->header.rows) && "row, out of range" );
-		assert( (col < data_->header.cols) && "col, out of range" );
-		assert( (channel < data_->header.channels) && "channel, out of range" );
+		assert( (row < base_.data_->header.rows) && "row, out of range" );
+		assert( (col < base_.data_->header.cols) && "col, out of range" );
+		assert( (channel < base_.data_->header.channels) && "channel, out of range" );
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
-					sizeof(type) * (data_->header.channels * col + channel) ) );
+				static_cast<void*>(
+					static_cast<int8_t*>(base_.data_->data) + base_.data_->header.row_size  * row +
+					sizeof(type) * (base_.data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
 
 	void set(uint32_t row, uint32_t col, uint32_t channel, type value)
 	{
-		assert( (row < data_->header.rows) && "row, out of range" );
-		assert( (col < data_->header.cols) && "col, out of range" );
-		assert( (channel < data_->header.channels) && "channel, out of range" );
+		assert( (row < base_.data_->header.rows) && "row, out of range" );
+		assert( (col < base_.data_->header.cols) && "col, out of range" );
+		assert( (channel < base_.data_->header.channels) && "channel, out of range" );
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
-					sizeof(type) * (data_->header.channels * col + channel) ) );
+				static_cast<void*>(
+					static_cast<int8_t*>(base_.data_->data) + base_.data_->header.row_size  * row +
+					sizeof(type) * (base_.data_->header.channels * col + channel) ) );
 		*ptr = value;
 	}
 
 	type& operator()(uint32_t row, uint32_t col, uint32_t channel = 0)
 	{
-		assert( (row < data_->header.rows) && "row, out of range" );
-		assert( (col < data_->header.cols) && "col, out of range" );
-		assert( (channel < data_->header.channels) && "channel, out of range" );
+		assert( (row < base_.data_->header.rows) && "row, out of range" );
+		assert( (col < base_.data_->header.cols) && "col, out of range" );
+		assert( (channel < base_.data_->header.channels) && "channel, out of range" );
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
-					sizeof(type) * (data_->header.channels * col + channel) ) );
+				static_cast<void*>(
+					static_cast<int8_t*>(base_.data_->data) + base_.data_->header.row_size  * row +
+					sizeof(type) * (base_.data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
 
 	const type& operator()(uint32_t row, uint32_t col, uint32_t channel = 0) const
 	{
-		assert( (row < data_->header.rows) && "row, out of range" );
-		assert( (col < data_->header.cols) && "col, out of range" );
-		assert( (channel < data_->header.channels) && "channel, out of range" );
+		assert( (row < base_.data_->header.rows) && "row, out of range" );
+		assert( (col < base_.data_->header.cols) && "col, out of range" );
+		assert( (channel < base_.data_->header.channels) && "channel, out of range" );
 
 		type* ptr =
 			static_cast<type*>(
-				static_cast<void*>( static_cast<int8_t*>(data_->data) + data_->header.row_size  * row +
-					sizeof(type) * (data_->header.channels * col + channel) ) );
+				static_cast<void*>(
+					static_cast<int8_t*>(base_.data_->data) + base_.data_->header.row_size  * row +
+					sizeof(type) * (base_.data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
 
-public:
+	const matrix_base& base() const
+	{
+		return this->base_;
+	}
+
+	matrix_base& base()
+	{
+		return this->base_;
+	}
 
 private:
 	matrix();
+
+	matrix_base base_;
 };
 
 } // end of namespace math

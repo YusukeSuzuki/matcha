@@ -39,8 +39,7 @@ main(int argc, char* argv[])
 	matrix<int> mat2(3,3);
 	fill(scalar<int, 1>({{b}}), mat2);
 
-	matrix<int> mat3(3,3);
-	add(mat1, mat2, mat3);
+	matrix<int> mat3( add(mat1, mat2) );
 
 	for(int row = 0; row < 3; ++row)
 	{
