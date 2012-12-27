@@ -24,11 +24,13 @@
 
 namespace matcha { namespace image {
 
+image_base load_png(const std::string& path, type_id_t type, color_space color);
+
 template<typename T>
 image<T> load_png(const std::string& path, color_space color)
 {
 	static_assert( is_supported_type<T>(), "T is not supported" );
-	return image<T>(1,1,1);
+	return image<T>( load_png(path, type_id<T>(), color) );
 }
 
 void save_png(const std::string& path, const image_base& img);
