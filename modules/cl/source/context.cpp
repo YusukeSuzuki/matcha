@@ -38,24 +38,57 @@ public:
 			}
 		}
 
-		cl_int success = 0;
+		cl_int err = 0;
 
 		context_ =
 			clCreateContext(NULL, devices.size(), &ids[0],
-			callback_base, this, &success);
+			callback_base, this, &err);
 
-		if(!success) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), success) );
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(const std::vector<device>& devices) : callback_()
+	{
+		std::vector<cl_device_id> ids(devices.size());
+
+		{
+			auto id = ids.begin();
+			for(auto device : devices)
+			{
+				*id = device.implementation_->id();
+				++id;
+			}
+		}
+
+		cl_int err = 0;
+
+		context_ =
+			clCreateContext(NULL, devices.size(), &ids[0], nullptr, nullptr, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	}
 
 	implementation(device::type type, context::callback_function callback) :
 		callback_(callback)
 	{
-		cl_int success = 0;
+		cl_int err = 0;
+
 		context_ = clCreateContextFromType(
 			NULL, device::implementation::to_device_type(type),
-			callback_base, this, &success);
+			callback_base, this, &err);
 
-		if(!success) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), success) );
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(device::type type) : callback_()
+	{
+		cl_int err = 0;
+
+		context_ = clCreateContextFromType(
+			nullptr, device::implementation::to_device_type(type),
+			nullptr, nullptr, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	}
 
 	/// to preserve
@@ -89,11 +122,20 @@ context::context(const std::vector<device>& devices, callback_function callback)
 {
 }
 
+context::context(const std::vector<device>& devices) :
+	implementation_( new context::implementation(devices) )
+{
+}
+
 context::context(device::type type, callback_function callback) :
 	implementation_( new context::implementation(type, callback) )
 {
 }
 
+context::context(device::type type) :
+	implementation_( new context::implementation(type) )
+{
+}
 
 } // end of namespace Core
 } // end of namespace Matcha

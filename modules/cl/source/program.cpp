@@ -20,6 +20,10 @@
 
 namespace matcha { namespace cl {
 
+program::~program() noexcept
+{
+}
+
 program&
 program::build(const std::vector<device>& devices)
 {

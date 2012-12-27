@@ -208,59 +208,6 @@ public:
 };
 
 class command_queue;
-class program;
-
-class context
-{
-public:
-	using callback_function = 
-		std::function<void (const std::string& errorinfo, const void* private_info,
-			size_t cb) >;
-
-	context(const std::vector<device>& devices, callback_function callback);
-	context(device::type type, callback_function callback);
-
-	/// queue control
-	command_queue create_queue(const device& device) const;
-
-	command_queue& hold_queue(const std::string& name, command_queue& queue);
-	command_queue& queue(const std::string& name);
-	const command_queue& queue(const std::string& name) const;
-
-	/// buffer control
-	buffer& create_buffer(
-		const std::set<buffer::flag>& flags, size_t size, void* host_ptr);
-
-	/// program control
-	program& create_program(const std::vector<std::string>& strings);
-
-	/// TBI
-	void info();
-
-private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-};
-
-class command_queue
-{
-public:
-	enum class property
-	{
-		out_of_order_exec_mode_enable,
-		profiling_enable,
-	};
-
-	virtual ~command_queue() noexcept;
-
-private:
-	command_queue();
-
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-
-	friend class context;
-};
 
 class kernel
 {
@@ -315,18 +262,6 @@ public:
 	};
 };
 
-class buffer_base
-{
-};
-
-class raw_buffer_wrapper : buffer_base
-{
-public:
-	raw_buffer_wrapper(void* ptr, size_t offset, size_t size);
-
-private:
-};
-
 class program
 {
 public:
@@ -370,6 +305,72 @@ private:
 	program();
 	class implementation;
 	std::shared_ptr<implementation> implementation_;
+};
+
+class context
+{
+public:
+	using callback_function = 
+		std::function<void (const std::string& errorinfo, const void* private_info,
+			size_t cb) >;
+
+	context(const std::vector<device>& devices, callback_function callback);
+	context(const std::vector<device>& devices);
+	context(device::type type, callback_function callback);
+	context(device::type type);
+
+	/// queue control
+	command_queue create_queue(const device& device) const;
+
+	command_queue& hold_queue(const std::string& name, command_queue& queue);
+	command_queue& queue(const std::string& name);
+	const command_queue& queue(const std::string& name) const;
+
+	/// buffer control
+	buffer& create_buffer(
+		const std::set<buffer::flag>& flags, size_t size, void* host_ptr);
+
+	/// program control
+	program create_program(const std::vector<std::string>& strings);
+
+	/// TBI
+	void info();
+
+private:
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+};
+
+class command_queue
+{
+public:
+	enum class property
+	{
+		out_of_order_exec_mode_enable,
+		profiling_enable,
+	};
+
+	virtual ~command_queue() noexcept;
+
+private:
+	command_queue();
+
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+
+	friend class context;
+};
+
+class buffer_base
+{
+};
+
+class raw_buffer_wrapper : buffer_base
+{
+public:
+	raw_buffer_wrapper(void* ptr, size_t offset, size_t size);
+
+private:
 };
 
 class memory
