@@ -15,17 +15,10 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_LISTENER_HPP__
-#define MATCHA_PROCESS_LISTENER_HPP__
+
+#include "matcha/process/listener.hpp"
 
 namespace matcha { namespace process {
-
-class listener
-{
-};
-
-
 } // end of namespace process
 } // end of namespace matcha
 
-#endif
