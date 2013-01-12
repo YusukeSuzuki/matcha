@@ -106,8 +106,8 @@ platform::devices(device::type t)
 
 	for(auto id : ids)
 	{
-		devices.push_back( device(std::shared_ptr<device::implementation>(
-			new device::implementation(id) ) ) );
+		devices.push_back( device(std::shared_ptr<typename device::implementation>(
+			new typename device::implementation(id) ) ) );
 	}
 
 	return std::move(devices);

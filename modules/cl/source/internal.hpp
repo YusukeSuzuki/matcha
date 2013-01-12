@@ -244,16 +244,11 @@ public:
 	{
 		switch(info)
 		{
-		case info_name::profile:
-			return CL_PLATFORM_PROFILE;
-		case info_name::version:
-			return CL_PLATFORM_VERSION;
-		case info_name::name:
-			return CL_PLATFORM_NAME;
-		case info_name::vendor:
-			return CL_PLATFORM_VENDOR;
-		case info_name::extensions:
-			return CL_PLATFORM_EXTENSIONS;
+		case info_name::profile: return CL_PLATFORM_PROFILE;
+		case info_name::version: return CL_PLATFORM_VERSION;
+		case info_name::name: return CL_PLATFORM_NAME;
+		case info_name::vendor: return CL_PLATFORM_VENDOR;
+		case info_name::extensions: return CL_PLATFORM_EXTENSIONS;
 		}
 
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), CL_INVALID_VALUE) );
@@ -263,10 +258,131 @@ private:
 	cl_platform_id id_;
 };
 
+class context::implementation
+{
+public:
+	implementation(
+		const std::vector<device>& devices, context::callback_function callback) :
+		callback_(callback)
+	{
+		std::vector<cl_device_id> ids(devices.size());
+
+		{
+			auto id = ids.begin();
+			for(auto device : devices)
+			{
+				*id = device.implementation_->id();
+				++id;
+			}
+		}
+
+		cl_int err = 0;
+
+		context_ =
+			clCreateContext(NULL, devices.size(), &ids[0],
+			callback_base, this, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(const std::vector<device>& devices) : callback_()
+	{
+		std::vector<cl_device_id> ids(devices.size());
+
+		{
+			auto id = ids.begin();
+			for(auto device : devices)
+			{
+				*id = device.implementation_->id();
+				++id;
+			}
+		}
+
+		cl_int err = 0;
+
+		context_ =
+			clCreateContext(NULL, devices.size(), &ids[0], nullptr, nullptr, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(device::type type, context::callback_function callback) :
+		callback_(callback)
+	{
+		cl_int err = 0;
+
+		context_ = clCreateContextFromType(
+			NULL, device::implementation::to_device_type(type),
+			callback_base, this, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(device::type type) : callback_()
+	{
+		cl_int err = 0;
+
+		context_ = clCreateContextFromType(
+			nullptr, device::implementation::to_device_type(type),
+			nullptr, nullptr, &err);
+
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	/// to preserve
+	void retain()
+	{
+		if(int err = clRetainContext(context_))
+			throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	/// to preserve
+	void release()
+	{
+		if(int err = clReleaseContext(context_))
+			throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	static void callback_base(
+		const char* errinfo, const void* private_info, size_t cb, void* user_data)
+	{
+		static_cast<implementation*>(user_data)->callback_(
+			std::string(errinfo), private_info, cb);
+	}
+
+	operator cl_context()
+	{
+		return context_;
+	}
+
+private:
+	cl_context context_;
+	context::callback_function callback_;
+};
+
 class program::implementation
 {
 public:
-	implementation();
+	implementation(context& context, const std::vector<std::string>& sources)
+	{
+		std::vector<const char*> source_ptrs(sources.size());
+
+		std::transform(sources.begin(), sources.end(), source_ptrs.begin(),
+			[](const std::string& str) -> const char* { return &str[0]; });
+
+		cl_int err = 0;
+
+		program_ = clCreateProgramWithSource(
+			*context.implementation(), source_ptrs.size(),
+			&source_ptrs[0], nullptr, &err);
+		
+		if(err) throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+	}
+
+	implementation(const implementation& rhs) :
+		program_(rhs.program_)
+	{
+	}
 
 	static cl_program_info to_program_info(program::info_name i)
 	{

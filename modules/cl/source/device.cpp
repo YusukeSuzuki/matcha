@@ -20,13 +20,25 @@
 
 namespace matcha { namespace cl {
 
-device::device(std::shared_ptr<device::implementation> a_implementation) :
-	implementation_(a_implementation)
+device::device(std::shared_ptr<typename device::implementation> implementation) :
+	implementation_(implementation)
 {
 }
 
 device::~device() noexcept
 {
+}
+
+std::shared_ptr<typename device::implementation>
+device::implementation()
+{
+	return implementation_;
+}
+
+const std::shared_ptr<typename device::implementation>
+device::implementation() const
+{
+	return implementation_;
 }
 
 template<>
@@ -37,7 +49,7 @@ auto device::info<device::info_name::type>() const ->
 
 	if(int err = clGetDeviceInfo(
 		*implementation_, implementation::to_device_info(info_name::type),
-		0, NULL, &size) )
+		0, nullptr, &size) )
 	{
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	}
@@ -69,7 +81,7 @@ inline auto get_info(cl_device_id id, cl_device_info info) -> T
 	static_assert(std::is_arithmetic<T>(), "type error");
 
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	T result;
 	if(int err = clGetDeviceInfo(id, info, size, &result, &size) )
@@ -81,7 +93,7 @@ template<>
 inline auto get_info<bool>(cl_device_id id, cl_device_info info) -> bool
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	cl_bool result;
 	if(int err = clGetDeviceInfo(id, info, size, &result, &size) )
@@ -93,7 +105,7 @@ template<>
 inline auto get_info<std::string>(cl_device_id id, cl_device_info info) -> std::string
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	std::vector<char> buf(size);
 	if(int err = clGetDeviceInfo(id, info, size, &buf[0], &size) )
@@ -105,7 +117,7 @@ template<>
 inline auto get_info<std::vector<size_t>>(cl_device_id id, cl_device_info info) -> std::vector<size_t>
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	std::vector<size_t> buf(size);
 	if(int err = clGetDeviceInfo(id, info, size, &buf[0], &size) )
@@ -117,7 +129,7 @@ template<>
 inline auto get_info<std::set<device::fp_config>>(cl_device_id id, cl_device_info info) -> std::set<device::fp_config>
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	cl_device_fp_config config;
 	if(int err = clGetDeviceInfo(id, info, size, &config, &size) )
@@ -146,7 +158,7 @@ template<>
 inline auto get_info<device::mem_cache_type>(cl_device_id id, cl_device_info info) -> device::mem_cache_type 
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 
 	cl_device_mem_cache_type config;
@@ -172,7 +184,7 @@ template<>
 inline auto get_info<device::local_mem_type>(cl_device_id id, cl_device_info info) -> device::local_mem_type
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 
 	cl_device_local_mem_type config;
@@ -197,7 +209,7 @@ template<>
 inline auto get_info<std::set<device::exec_capability>>(cl_device_id id, cl_device_info info) -> std::set<device::exec_capability>
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	cl_device_exec_capabilities config;
 	if(int err = clGetDeviceInfo(id, info, size, &config, &size) )
@@ -215,7 +227,7 @@ template<>
 inline auto get_info<std::set<command_queue::property>>(cl_device_id id, cl_device_info info) -> std::set<command_queue::property>
 {
 	size_t size = 0;
-	if(int err = clGetDeviceInfo(id, info, 0, NULL, &size) )
+	if(int err = clGetDeviceInfo(id, info, 0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	cl_device_exec_capabilities config;
 	if(int err = clGetDeviceInfo(id, info, size, &config, &size) )
@@ -305,7 +317,7 @@ auto device::info<device::info_name::platform>() const -> platform
 	size_t size = 0;
 	if(int err = clGetDeviceInfo(
 		*implementation_, implementation::to_device_info(info_name::platform),
-		0, NULL, &size) )
+		0, nullptr, &size) )
 		throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
 	cl_platform_id config;
 	if(int err = clGetDeviceInfo(

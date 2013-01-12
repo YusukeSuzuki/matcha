@@ -157,12 +157,16 @@ public:
 private:
 	class implementation;
 	std::shared_ptr<implementation> implementation_;
+	
+	std::shared_ptr<typename device::implementation> implementation();
+	const std::shared_ptr<typename device::implementation> implementation() const;
 
-	device(std::shared_ptr<implementation> implementation_);
+	device(std::shared_ptr<typename device::implementation> implementation_);
 
 	friend class platform;
 	friend class context;
 	friend class program;
+	friend class command_queue;
 };
 
 class platform
@@ -193,6 +197,8 @@ private:
 	friend class device;
 };
 
+class context;
+
 class buffer
 {
 public:
@@ -205,13 +211,83 @@ public:
 		alloc_host_ptr,
 		copy_host_ptr,
 	};
+
+	buffer(context& context, const std::set<buffer::flag>& flags, size_t size);
+	buffer(context& context, const std::set<buffer::flag>& flags,
+		size_t size, void* host_ptr);
+
+private:
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+	std::shared_ptr<implementation> implementation();
+	const std::shared_ptr<typename buffer::implementation> implementation() const;
+
+	friend class kernel;
+	friend class command_queue;
 };
 
-class command_queue;
+class event
+{
+public:
+private:
+	class implementation;
+	event(std::shared_ptr<implementation> implementation);
+	std::shared_ptr<implementation> implementation_;
+	std::shared_ptr<typename event::implementation> implementation();
+	const std::shared_ptr<typename event::implementation> implementation() const;
+
+	friend class command_queue;
+};
+
+struct work_item
+{
+	size_t offset;
+	size_t size;
+};
+
+class kernel;
+
+class command_queue
+{
+public:
+	enum class property
+	{
+		out_of_order_exec_mode_enable,
+		profiling_enable,
+	};
+
+	command_queue(
+		context& context, device& device, const std::set<property>& properties);
+
+	// test version
+	event enqueue_nd_range(kernel& kernel, size_t worksize);
+
+	event enqueue_read(
+		buffer& buffer, bool block_read, size_t offset, size_t size_in_bytes,
+		void* out_ptr, const std::vector<event>& wait_list);
+
+	void wait_for(const std::vector<event>& wait_list);
+
+private:
+	command_queue();
+
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+
+	friend class context;
+};
+
+class program;
 
 class kernel
 {
 public:
+	kernel(program& program, const std::string& name);
+	kernel(const kernel& rhs);
+	kernel& operator=(const kernel& rhs);
+
+	static std::vector<kernel> create_kernels_in_program(program& program);
+
 	template<typename T, typename ... R>
 	void enqueue(T& t, R ... r)
 	{
@@ -241,7 +317,7 @@ public:
 		set_arguments(0, t, r ...);
 	}
 
-	void set_argument(unsigned int index, buffer& buffer);
+	kernel& set_argument(unsigned int index, buffer& buffer);
 
 	enum class info_name
 	{
@@ -260,7 +336,16 @@ public:
 		preferred_size_multiple,
 		private_mem_size,
 	};
+
+private:
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+	kernel(const std::shared_ptr<implementation>& ptr);
+
+	friend class command_queue;
 };
+
+class context;
 
 class program
 {
@@ -283,12 +368,16 @@ public:
 		log,
 	};
 
+	program(context& context, const std::vector<std::string>& sources);
+	program(const program& program);
+	program& operator =(const program& rhs);
 	virtual ~program() noexcept;
 
 	program& build(const std::vector<device>& devices);
 
 	kernel create_kernel(const std::string& name);
-	std::vector<kernel> create_kernels();
+	std::vector<kernel> create_kernels(const std::vector<std::string>& names);
+	std::vector<kernel> create_all_kernels();
 	unsigned int num_kernels() const;
 
 	template<info_name P> struct info_type {};
@@ -305,6 +394,10 @@ private:
 	program();
 	class implementation;
 	std::shared_ptr<implementation> implementation_;
+	std::shared_ptr<implementation> implementation();
+	const std::shared_ptr<typename program::implementation> implementation() const;
+
+	friend class kernel;
 };
 
 class context
@@ -331,46 +424,22 @@ public:
 		const std::set<buffer::flag>& flags, size_t size, void* host_ptr);
 
 	/// program control
-	program create_program(const std::vector<std::string>& strings);
+	program create_program(const std::vector<std::string>& sources);
 
 	/// TBI
 	void info();
 
 private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-};
-
-class command_queue
-{
-public:
-	enum class property
-	{
-		out_of_order_exec_mode_enable,
-		profiling_enable,
-	};
-
-	virtual ~command_queue() noexcept;
-
-private:
-	command_queue();
+	context();
 
 	class implementation;
 	std::shared_ptr<implementation> implementation_;
+	std::shared_ptr<implementation> implementation();
+	const std::shared_ptr<typename context::implementation> implementation() const;
 
-	friend class context;
-};
-
-class buffer_base
-{
-};
-
-class raw_buffer_wrapper : buffer_base
-{
-public:
-	raw_buffer_wrapper(void* ptr, size_t offset, size_t size);
-
-private:
+	friend class program;
+	friend class buffer;
+	friend class command_queue;
 };
 
 class memory
@@ -390,10 +459,6 @@ class image3d
 };
 
 class sampler
-{
-};
-
-class event
 {
 };
 

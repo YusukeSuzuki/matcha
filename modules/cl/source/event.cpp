@@ -15,42 +15,16 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#include "matcha/cl/cl.hpp"
 
+#include "matcha/cl/cl.hpp"
 #include "internal.hpp"
+#include "event.internal.hpp"
 
 namespace matcha { namespace cl {
 
-context::context(const std::vector<device>& devices, callback_function callback) :
-	implementation_( new typename context::implementation(devices, callback) )
+event::event(std::shared_ptr<typename event::implementation> implementation) :
+	implementation_(implementation)
 {
-}
-
-context::context(const std::vector<device>& devices) :
-	implementation_( new typename context::implementation(devices) )
-{
-}
-
-context::context(device::type type, callback_function callback) :
-	implementation_( new typename context::implementation(type, callback) )
-{
-}
-
-context::context(device::type type) :
-	implementation_( new typename context::implementation(type) )
-{
-}
-
-std::shared_ptr<typename context::implementation>
-context::implementation()
-{
-	return this->implementation_;
-}
-
-program
-context::create_program(const std::vector<std::string>& sources)
-{
-	return program(*this, sources);
 }
 
 } // end of namespace Core

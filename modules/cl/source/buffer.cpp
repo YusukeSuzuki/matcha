@@ -16,41 +16,33 @@
  *    limitations under the License.
  */
 #include "matcha/cl/cl.hpp"
-
 #include "internal.hpp"
+#include "buffer.internal.hpp"
 
 namespace matcha { namespace cl {
 
-context::context(const std::vector<device>& devices, callback_function callback) :
-	implementation_( new typename context::implementation(devices, callback) )
+buffer::buffer(context& context, const std::set<buffer::flag>& flags, size_t size) :
+	implementation_( new typename buffer::implementation(context, flags, size) )
 {
 }
 
-context::context(const std::vector<device>& devices) :
-	implementation_( new typename context::implementation(devices) )
+buffer::buffer(context& context, const std::set<buffer::flag>& flags, 
+	size_t size, void* host_ptr) :
+	implementation_(
+		new typename buffer::implementation(context, flags, size, host_ptr) )
 {
 }
 
-context::context(device::type type, callback_function callback) :
-	implementation_( new typename context::implementation(type, callback) )
+std::shared_ptr<typename buffer::implementation>
+buffer::implementation()
 {
+	return implementation_;
 }
 
-context::context(device::type type) :
-	implementation_( new typename context::implementation(type) )
+const std::shared_ptr<typename buffer::implementation>
+buffer::implementation() const
 {
-}
-
-std::shared_ptr<typename context::implementation>
-context::implementation()
-{
-	return this->implementation_;
-}
-
-program
-context::create_program(const std::vector<std::string>& sources)
-{
-	return program(*this, sources);
+	return implementation_;
 }
 
 } // end of namespace Core

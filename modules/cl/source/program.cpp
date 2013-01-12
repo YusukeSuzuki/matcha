@@ -20,6 +20,23 @@
 
 namespace matcha { namespace cl {
 
+program::program(context& context, const std::vector<std::string>& sources) :
+	implementation_( new typename program::implementation(context, sources) )
+{
+}
+
+program::program(const program& rhs) :
+	implementation_( new typename program::implementation(*rhs.implementation_) )
+{
+}
+
+program&
+program::operator=(const program& rhs)
+{
+	implementation_ = rhs.implementation_;
+	return *this;
+}
+
 program::~program() noexcept
 {
 }
@@ -36,6 +53,44 @@ program::build(const std::vector<device>& devices)
 	}
 
 	return *this;
+}
+
+std::vector<kernel>
+program::create_all_kernels()
+{
+	return kernel::create_kernels_in_program(*this);
+}
+
+std::shared_ptr<typename program::implementation>
+program::implementation()
+{
+	return implementation_;
+}
+
+const std::shared_ptr<typename program::implementation>
+program::implementation() const
+{
+	return implementation_;
+}
+
+kernel
+program::create_kernel(const std::string& name)
+{
+	return kernel(*this, name);
+}
+
+std::vector<kernel>
+program::create_kernels(const std::vector<std::string>& names)
+{
+	std::vector<kernel> result;
+	
+	std::for_each(names.begin(), names.end(),
+		[&result, this](const std::string& name) -> void
+		{
+			result.push_back( kernel(*this, name) );
+		});
+
+	return result;
 }
 
 namespace internal {
