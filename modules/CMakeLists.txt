@@ -20,7 +20,7 @@ include(CMakeMacro.cmake NO_POLICY_SCOPE)
 
 add_subdirectory (core)
 #add_subdirectory (utilities)
-#add_subdirectory (application)
+add_subdirectory (process)
 add_subdirectory (math)
 add_subdirectory (image)
 #add_subdirectory (image_io)

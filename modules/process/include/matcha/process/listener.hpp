@@ -18,8 +18,8 @@
 #ifndef MATCHA_DISTRIBUTION_LISTENER_HPP__
 #define MATCHA_DISTRIBUTION_LISTENER_HPP__
 
-namespace matcha { namespace distribution {
-} // end of namespace distribution
+namespace matcha { namespace process {
+} // end of namespace process
 } // end of namespace matcha
 
 #endif
