@@ -15,26 +15,26 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_LOOPER_HPP__
-#define MATCHA_PROCESS_LOOPER_HPP__
+#ifndef MATCHA_PROCESS_LOOPER_INTERNAL_HPP__
+#define MATCHA_PROCESS_LOOPER_INTERNAL_HPP__
 
-#include <matcha/process/listener.hpp>
-#include <matcha/process/handler.hpp>
+#include "matcha/process/looper.hpp"
+#include "matcha/process/listener.hpp"
+
+#include <sys/epoll.h>
 
 namespace matcha { namespace process {
 
-class looper
+class looper::implementation
 {
 public:
-	looper();
-	virtual ~looper() noexcept;
+	implementation();
+	virtual ~implementation() noexcept;
 
 	void run();
 	void quit();
 
 private:
-	class implementation;
-	std::unique_ptr<implementation> implementation_;
 };
 
 } // end of namespace process

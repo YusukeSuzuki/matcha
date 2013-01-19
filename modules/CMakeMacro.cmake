@@ -45,8 +45,8 @@ macro (matcha_library_definition name)
 		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../${d}/include)
 	endforeach()
 
-	add_library(${the_target} SHARED ${lib_srcs} ${ext_lib_srcs})
-	add_library(${the_target_static} STATIC ${lib_srcs} ${ext_lib_srcs})
+	add_library(${the_target} SHARED ${lib_srcs} ${ext_lib_srcs} ${sys_lib_srcs})
+	add_library(${the_target_static} STATIC ${lib_srcs} ${ext_lib_srcs} ${sys_lib_srcs})
 
 
 	set(BUILD_FLAGS "")
@@ -58,6 +58,7 @@ macro (matcha_library_definition name)
 	endif()
 
 	set_source_files_properties(SOURCE ${lib_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
+	set_source_files_properties(SOURCE ${sys_lib_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
 	set_source_files_properties(SOURCE ${ext_lib_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
 	set_target_properties(${the_target} PROPERTIES VERSION 1.0.0 SOVERSION 1)
 	set_target_properties(${the_target_static} PROPERTIES OUTPUT_NAME "${the_target}")

@@ -20,6 +20,11 @@ matcha_project_decraration(process)
 
 file(GLOB lib_srcs "*.cpp")
 
+if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+	file(GLOB sys_lib_srcs "linux/*.cpp")
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/linux)
+endif(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+
 set(lib_external stdc++ pthread)
 matcha_library_definition(process core)
 

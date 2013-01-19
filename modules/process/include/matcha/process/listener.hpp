@@ -18,10 +18,20 @@
 #ifndef MATCHA_PROCESS_LISTENER_HPP__
 #define MATCHA_PROCESS_LISTENER_HPP__
 
+#include <memory>
+
 namespace matcha { namespace process {
 
 class listener
 {
+public:
+	listener();
+	virtual ~listener() noexcept;
+
+private:
+	class implementation;
+
+	std::unique_ptr<implementation> implementation_;
 };
 
 

@@ -17,8 +17,15 @@
  */
 
 #include "matcha/process/listener.hpp"
+#include "listener.internal.hpp"
 
 namespace matcha { namespace process {
+
+listener::listener() :
+	implementation_( new listener::implementation() )
+{
+}
+
 } // end of namespace process
 } // end of namespace matcha
 
