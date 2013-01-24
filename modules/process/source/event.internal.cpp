@@ -15,30 +15,20 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_EVENT_HPP__
-#define MATCHA_PROCESS_EVENT_HPP__
 
-#include <matcha/core/any.hpp>
-
-#include <memory>
+#include "matcha/process/event.hpp"
+#include "event.internal.hpp"
 
 namespace matcha { namespace process {
 
-class event
+event::implementation::implementation(const core::any& content)
 {
-public:
-	event(const core::any& content);
-	virtual ~event() noexcept;
+}
 
-	const core::any& content() const;
-	core::any& content();
-
-private:
-	class implementation;
-	std::unique_ptr<implementation> implementation_;
-};
+event::implementation::~implementation() noexcept
+{
+}
 
 } // end of namespace process
 } // end of namespace matcha
 
-#endif

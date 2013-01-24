@@ -18,7 +18,11 @@
 #ifndef MATCHA_PROCESS_LISTENER_HPP__
 #define MATCHA_PROCESS_LISTENER_HPP__
 
+#include <matcha/process/event.hpp>
+#include <matcha/process/port.hpp>
+
 #include <memory>
+#include <vector>
 
 namespace matcha { namespace process {
 
@@ -27,6 +31,11 @@ class listener
 public:
 	listener();
 	virtual ~listener() noexcept;
+
+	listener& add(port port);
+	listener& remove(port port);
+
+	std::vector<std::pair<event, port>> wait_events();
 
 private:
 	class implementation;
