@@ -21,7 +21,9 @@
 
 namespace matcha { namespace process {
 
-looper::implementation::implementation()
+looper::implementation::implementation(looper* looper) :
+	looper_(looper),
+	before_run_handler_( empty_handler )
 {
 }
 
@@ -29,9 +31,20 @@ looper::implementation::~implementation() noexcept
 {
 }
 
+looper::before_run_handler_function&
+looper::implementation::before_run_handler()
+{
+	return before_run_handler_;
+}
+
 void
 looper::implementation::run()
 {
+	before_run_handler_(*looper_);
+
+	for(;;)
+	{
+	}
 }
 
 void

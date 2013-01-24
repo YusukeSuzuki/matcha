@@ -21,7 +21,7 @@
 namespace matcha { namespace process {
 
 looper::looper() :
-	implementation_( new looper::implementation() )
+	implementation_( new looper::implementation(this) )
 {
 }
 
@@ -35,6 +35,12 @@ void
 looper::quit()
 {
 	implementation_->quit();
+}
+
+looper::before_run_handler_function&
+looper::before_run_handler()
+{
+	return implementation_->before_run_handler();
 }
 
 } // end of namespace process

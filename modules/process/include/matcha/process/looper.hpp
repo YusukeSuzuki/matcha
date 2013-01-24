@@ -21,6 +21,8 @@
 #include <matcha/process/listener.hpp>
 #include <matcha/process/handler.hpp>
 
+#include <functional>
+
 namespace matcha { namespace process {
 
 class looper
@@ -28,6 +30,10 @@ class looper
 public:
 	looper();
 	virtual ~looper() noexcept;
+
+	using before_run_handler_function = std::function< void(looper&) >;
+
+	before_run_handler_function& before_run_handler();
 
 	void run();
 	void quit();

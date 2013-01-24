@@ -28,13 +28,20 @@ namespace matcha { namespace process {
 class looper::implementation
 {
 public:
-	implementation();
+	implementation(looper* looper);
 	virtual ~implementation() noexcept;
+
+	void before_run(before_run_handler_function handler);
+	before_run_handler_function& before_run_handler();
 
 	void run();
 	void quit();
 
 private:
+	static void empty_handler(looper&) {}
+
+	looper* looper_;
+	before_run_handler_function before_run_handler_;
 };
 
 } // end of namespace process
