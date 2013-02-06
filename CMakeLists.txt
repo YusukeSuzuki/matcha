@@ -18,5 +18,13 @@ cmake_minimum_required(VERSION 2.6)
 
 enable_testing()
 
+if(APPLE)
+elseif(WIN32)
+elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+	add_definitions(-DMATCHA_LINUX)
+else()
+	message(FATAL_ERROR "Unsupported OS")
+endif()
+
 add_subdirectory (modules)
 

@@ -24,7 +24,6 @@ macro (matcha_header_install_definition name)
 	if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/include/matcha/${name}/bits/")
 		file(GLOB bits_headers "include/matcha/${name}/bits/*.hpp")
 		install(FILES ${bits_headers} DESTINATION "include/matcha/${name}/bits")
-		message("bits")
 	endif()
 endmacro()
 
