@@ -17,6 +17,9 @@
 cmake_minimum_required(VERSION 2.6)
 
 add_subdirectory (source)
+configure_file(
+	${CMAKE_CURRENT_SOURCE_DIR}/include/matcha/core/config.hpp.in
+	${CMAKE_CURRENT_BINARY_DIR}/include/matcha/core/config.hpp)
 matcha_header_install_definition(core)
 add_subdirectory (tests)
 
