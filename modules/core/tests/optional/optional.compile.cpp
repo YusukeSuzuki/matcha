@@ -18,11 +18,16 @@
 
 #include <matcha/core/optional.hpp>
 
+#include <string>
+
 int
 main(int argc, char* argv[])
 {
 	using namespace std;
 	using namespace matcha::core;
+
+	optional<int> int_option(1);
+	optional<string> string_option(string("test"));
 
 	return 0;
 }
