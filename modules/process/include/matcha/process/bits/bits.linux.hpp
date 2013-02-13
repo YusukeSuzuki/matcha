@@ -15,44 +15,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-
-#include "matcha/process/event.hpp"
-#include "event.internal.hpp"
+#ifndef MATCHA_PROCESS_BITS_BITS_LINUX_HPP__
+#define MATCHA_PROCESS_BITS_BITS_LINUX_HPP__
 
 namespace matcha { namespace process {
 
-event::event() :
-	implementation_( new event::implementation(core::any()) )
+class os_specific_port_implementation
 {
-}
-
-event::event(const event& event) :
-	implementation_( new event::implementation(*event.implementation_) )
-{
-}
-
-event::event(const core::any& content) :
-	implementation_( new event::implementation(content) )
-{
-}
-
-event::~event() noexcept
-{
-}
-
-core::any&
-event::content()
-{
-	return implementation_->content();
-}
-
-const core::any&
-event::content() const
-{
-	return implementation_->content();
-}
-
+public:
+};
 
 } // end of namespace process
 } // end of namespace matcha
 
+#endif

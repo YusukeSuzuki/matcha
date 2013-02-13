@@ -27,6 +27,8 @@ namespace matcha { namespace process {
 class event
 {
 public:
+	event();
+	event(const event& event);
 	event(const core::any& content);
 	virtual ~event() noexcept;
 

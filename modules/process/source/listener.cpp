@@ -26,6 +26,30 @@ listener::listener() :
 {
 }
 
+listener::~listener() noexcept
+{
+}
+
+listener&
+listener::add(std::shared_ptr<port> port)
+{
+	implementation_->add(port);
+	return *this;
+}
+
+listener&
+listener::remove(std::shared_ptr<port> port)
+{
+	implementation_->remove(port);
+	return *this;
+}
+
+std::vector<std::shared_ptr<port>>
+listener::wait_for_events()
+{
+	return implementation_->wait_for_events();
+}
+
 } // end of namespace process
 } // end of namespace matcha
 

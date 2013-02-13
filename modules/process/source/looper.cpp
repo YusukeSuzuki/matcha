@@ -25,6 +25,10 @@ looper::looper() :
 {
 }
 
+looper::~looper() noexcept
+{
+}
+
 void
 looper::run()
 {
@@ -41,6 +45,18 @@ looper::before_run_handler_function&
 looper::before_run_handler()
 {
 	return implementation_->before_run_handler();
+}
+
+matcha::process::listener&
+looper::listener()
+{
+	return implementation_->listener();
+}
+
+const matcha::process::listener&
+looper::listener() const
+{
+	return implementation_->listener();
 }
 
 } // end of namespace process

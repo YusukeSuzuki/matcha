@@ -16,6 +16,7 @@
  *    limitations under the License.
  */
 #include "matcha/process/looper.hpp"
+#include "matcha/process/port.hpp"
 #include "matcha/core/exception.hpp"
 #include "looper.internal.hpp"
 
@@ -44,12 +45,33 @@ looper::implementation::run()
 
 	for(;;)
 	{
+		auto ports = listener_.wait_for_events();
+
+		for(auto& port : ports)
+		{
+			if(auto event = port->read())
+			{
+				port->send(*event);
+			}
+		}
 	}
 }
 
 void
 looper::implementation::quit()
 {
+}
+
+matcha::process::listener&
+looper::implementation::listener()
+{
+	return listener_;
+}
+
+const matcha::process::listener&
+looper::implementation::listener() const
+{
+	return listener_;
 }
 
 } // end of namespace process

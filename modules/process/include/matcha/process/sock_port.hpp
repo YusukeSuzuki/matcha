@@ -15,44 +15,35 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#ifndef MATCHA_PROCESS_SOCK_PORT_HPP__
+#define MATCHA_PROCESS_SOCK_PORT_HPP__
 
-#include "matcha/process/event.hpp"
-#include "event.internal.hpp"
+#include <matcha/process/port.hpp>
+#include <memory>
 
 namespace matcha { namespace process {
 
-event::event() :
-	implementation_( new event::implementation(core::any()) )
+class sock_port
 {
-}
+public:
+	sock_port& handle(event& event);
 
-event::event(const event& event) :
-	implementation_( new event::implementation(*event.implementation_) )
+private:
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+};
+
+class listen_port : public sock_port
 {
-}
+public:
+	sock_port& handle(event& event);
 
-event::event(const core::any& content) :
-	implementation_( new event::implementation(content) )
-{
-}
-
-event::~event() noexcept
-{
-}
-
-core::any&
-event::content()
-{
-	return implementation_->content();
-}
-
-const core::any&
-event::content() const
-{
-	return implementation_->content();
-}
-
+private:
+	class implementation;
+	std::shared_ptr<implementation> implementation_;
+};
 
 } // end of namespace process
 } // end of namespace matcha
 
+#endif

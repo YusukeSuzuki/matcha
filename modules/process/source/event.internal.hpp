@@ -25,8 +25,15 @@ namespace matcha { namespace process {
 class event::implementation
 {
 public:
+	implementation(const implementation& implementation);
 	implementation(const core::any& content);
 	virtual ~implementation() noexcept;
+
+	core::any& content();
+	const core::any& content() const;
+
+private:
+	core::any content_;
 };
 
 } // end of namespace process

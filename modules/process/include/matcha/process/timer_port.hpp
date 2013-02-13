@@ -15,35 +15,42 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_LISTENER_HPP__
-#define MATCHA_PROCESS_LISTENER_HPP__
+#ifndef MATCHA_PROCESS_TIMER_PORT_HPP__
+#define MATCHA_PROCESS_TIMER_PORT_HPP__
 
-#include <matcha/process/event.hpp>
+#include <matcha/process/port.hpp>
 
+#include <cstdint>
+#include <ctime>
+#include <functional>
 #include <memory>
-#include <vector>
-#include <tuple>
 
 namespace matcha { namespace process {
 
-class port;
-
-class listener
+class timer_port : public port
 {
 public:
-	listener();
-	virtual ~listener() noexcept;
+	timer_port();
+	virtual ~timer_port() noexcept;
 
-	listener& add(std::shared_ptr<port> port);
-	listener& remove(std::shared_ptr<port> port);
+	static std::shared_ptr<timer_port> create();
 
-	std::vector<std::shared_ptr<port>> wait_for_events();
+	virtual core::optional<event> read();
+	virtual void send(event& event);
+	virtual port_implementation_base& implementation();
+
+	using handler_function = std::function<void(timer_port&, uint64_t expiration)>;
+
+	timer_port& handler(const timer_port::handler_function& handler);
+	const handler_function& handler() const;
+
+	timer_port& start(long sec, long nanosec, bool is_interval);
+	timer_port& stop();
 
 private:
 	class implementation;
-	std::unique_ptr<implementation> implementation_;
+	std::shared_ptr<typename timer_port::implementation> implementation_;
 };
-
 
 } // end of namespace process
 } // end of namespace matcha

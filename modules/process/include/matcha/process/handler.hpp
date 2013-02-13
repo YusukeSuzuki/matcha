@@ -18,11 +18,9 @@
 #ifndef MATCHA_PROCESS_HANDLER_HPP__
 #define MATCHA_PROCESS_HANDLER_HPP__
 
-namespace matcha { namespace process {
+#include <functional>
 
-class handler
-{
-};
+namespace matcha { namespace process {
 
 } // end of namespace process
 } // end of namespace matcha

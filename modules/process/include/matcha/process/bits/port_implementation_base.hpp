@@ -15,44 +15,26 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#ifndef MATCHA_PROCESS_BITS_PORT_IMPLEMENTATION_HPP__
+#define MATCHA_PROCESS_BITS_PORT_IMPLEMENTATION_HPP__
 
-#include "matcha/process/event.hpp"
-#include "event.internal.hpp"
+#include <matcha/process/event.hpp>
+#include <memory>
 
 namespace matcha { namespace process {
 
-event::event() :
-	implementation_( new event::implementation(core::any()) )
+class port_implementation_base
 {
-}
+public:
+	port_implementation_base();
+	virtual ~port_implementation_base() noexcept;
 
-event::event(const event& event) :
-	implementation_( new event::implementation(*event.implementation_) )
-{
-}
+	virtual int get_fd() = 0;
 
-event::event(const core::any& content) :
-	implementation_( new event::implementation(content) )
-{
-}
-
-event::~event() noexcept
-{
-}
-
-core::any&
-event::content()
-{
-	return implementation_->content();
-}
-
-const core::any&
-event::content() const
-{
-	return implementation_->content();
-}
-
+private:
+};
 
 } // end of namespace process
 } // end of namespace matcha
 
+#endif

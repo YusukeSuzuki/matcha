@@ -15,44 +15,38 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#ifndef MATCHA_PROCESS_TIMER_PORT_INTERNAL_HPP__
+#define MATCHA_PROCESS_TIMER_PORT_INTERNAL_HPP__
 
-#include "matcha/process/event.hpp"
-#include "event.internal.hpp"
+#include "matcha/process/timer_port.hpp"
+#include "matcha/process/bits/port_implementation_base.hpp"
 
 namespace matcha { namespace process {
 
-event::event() :
-	implementation_( new event::implementation(core::any()) )
+class timer_port::implementation : public port_implementation_base
 {
-}
+public:
+	implementation();
+	virtual ~implementation() noexcept;
 
-event::event(const event& event) :
-	implementation_( new event::implementation(*event.implementation_) )
-{
-}
+	void handler(const timer_port::handler_function& handler);
+	const timer_port::handler_function& handler() const;
 
-event::event(const core::any& content) :
-	implementation_( new event::implementation(content) )
-{
-}
+	void start(long sec, long nanosec, bool is_interval);
 
-event::~event() noexcept
-{
-}
+	void send(timer_port& port, event& event);
+	void stop();
 
-core::any&
-event::content()
-{
-	return implementation_->content();
-}
+	uint64_t read();
 
-const core::any&
-event::content() const
-{
-	return implementation_->content();
-}
+	virtual int get_fd();
 
+private:
+	int fd_;
+	timer_port::handler_function handler_;
+};
 
 } // end of namespace process
 } // end of namespace matcha
 
+#endif

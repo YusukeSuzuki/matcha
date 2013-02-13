@@ -18,10 +18,33 @@
 #ifndef MATCHA_PROCESS_PORT_HPP__
 #define MATCHA_PROCESS_PORT_HPP__
 
+#include <matcha/core/optional.hpp>
+
+#include <matcha/process/event.hpp>
+#include <matcha/process/listener.hpp>
+
+#include <matcha/process/bits/bits.hpp>
+
+#include <memory>
+
 namespace matcha { namespace process {
+
+class port_implementation_base;
 
 class port
 {
+public:
+	port();
+	virtual ~port() noexcept;
+
+	virtual port_implementation_base& implementation() = 0;
+
+	virtual core::optional<event> read() = 0;
+	virtual void send(event& event) = 0;
+
+private:
+	class implementation;
+	std::shared_ptr<typename port::implementation> implementation_;
 };
 
 } // end of namespace process

@@ -37,10 +37,16 @@ public:
 	void run();
 	void quit();
 
+	void detach();
+
+	matcha::process::listener& listener();
+	const matcha::process::listener& listener() const;
+
 private:
 	static void empty_handler(looper&) {}
 
 	looper* looper_;
+	matcha::process::listener listener_;
 	before_run_handler_function before_run_handler_;
 };
 

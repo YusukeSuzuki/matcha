@@ -15,44 +15,19 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
+#ifndef MATCHA_PROCESS_BITS_BITS_HPP__
+#define MATCHA_PROCESS_BITS_BITS_HPP__
 
-#include "matcha/process/event.hpp"
-#include "event.internal.hpp"
+#include <matcha/core/config.hpp>
 
-namespace matcha { namespace process {
+#ifdef MATCHA_LINUX
+#include <matcha/process/bits/bits.linux.hpp>
+#elif defined MATCHA_OSX
+#include <matcha/process/bits/bits.osx.hpp>
+#elif defined MATCHA_WINDOWS
+#include <matcha/process/bits/bits.windows.hpp>
+#else
+#error "Unsupported OS"
+#endif
 
-event::event() :
-	implementation_( new event::implementation(core::any()) )
-{
-}
-
-event::event(const event& event) :
-	implementation_( new event::implementation(*event.implementation_) )
-{
-}
-
-event::event(const core::any& content) :
-	implementation_( new event::implementation(content) )
-{
-}
-
-event::~event() noexcept
-{
-}
-
-core::any&
-event::content()
-{
-	return implementation_->content();
-}
-
-const core::any&
-event::content() const
-{
-	return implementation_->content();
-}
-
-
-} // end of namespace process
-} // end of namespace matcha
-
+#endif

@@ -21,12 +21,30 @@
 
 namespace matcha { namespace process {
 
-event::implementation::implementation(const core::any& content)
+event::implementation::implementation(const implementation& implementation) :
+	content_(implementation.content_)
+{
+}
+
+event::implementation::implementation(const core::any& content) :
+	content_(content)
 {
 }
 
 event::implementation::~implementation() noexcept
 {
+}
+
+core::any&
+event::implementation::content()
+{
+	return content_;
+}
+
+const core::any&
+event::implementation::content() const
+{
+	return content_;
 }
 
 } // end of namespace process

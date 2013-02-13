@@ -36,7 +36,11 @@ public:
 	before_run_handler_function& before_run_handler();
 
 	void run();
+	void detach();
 	void quit();
+
+	matcha::process::listener& listener();
+	const matcha::process::listener& listener() const;
 
 private:
 	class implementation;

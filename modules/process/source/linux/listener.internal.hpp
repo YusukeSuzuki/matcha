@@ -20,6 +20,9 @@
 
 #include "matcha/process/listener.hpp"
 
+#include <map>
+#include <tuple>
+
 #include <sys/epoll.h>
 
 namespace matcha { namespace process {
@@ -32,8 +35,14 @@ public:
 	implementation();
 	virtual ~implementation() noexcept;
 
+	void add(std::shared_ptr<port> port);
+	void remove(std::shared_ptr<port> port);
+
+	std::vector<std::shared_ptr<port>> wait_for_events();
+
 private:
 	int epoll_fd_;
+	std::map<int, std::shared_ptr<port>> fd_port_map_;
 };
 
 } // end of namespace process
