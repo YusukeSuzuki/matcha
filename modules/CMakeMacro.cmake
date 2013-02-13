@@ -25,6 +25,11 @@ macro (matcha_header_install_definition name)
 		file(GLOB bits_headers "include/matcha/${name}/bits/*.hpp")
 		install(FILES ${bits_headers} DESTINATION "include/matcha/${name}/bits")
 	endif()
+	if(EXISTS "${CMAKE_CURRENT_BINARY_DIR}/include/matcha/${name}/config.hpp")
+		install(FILES
+			${CMAKE_CURRENT_BINARY_DIR}/include/matcha/${name}/config.hpp
+			DESTINATION "include/matcha/${name}")
+	endif()
 endmacro()
 
 # --------------------------------------------------------------------------------
