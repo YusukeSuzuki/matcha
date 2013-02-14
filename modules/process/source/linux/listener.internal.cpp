@@ -85,13 +85,9 @@ listener::implementation::wait_for_events()
 
 	std::vector< std::shared_ptr<port> > result;
 
-	std::cout << MATCHA_EXCEPTION_WHERE << std::endl;
-	std::cout << num << std::endl;
-
 	while(num)
 	{
 		--num;
-		std::cout << events[num].events << std::endl;
 		if(events[num].events & EPOLLIN)
 		{
 			result.push_back(fd_port_map_[ events[num].data.fd ]);
