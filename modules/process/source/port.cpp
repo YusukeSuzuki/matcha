@@ -29,6 +29,36 @@ port::~port() noexcept
 {
 }
 
+bool operator ==(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ == rhs.implementation_;
+}
+
+bool operator !=(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ != rhs.implementation_;
+}
+
+bool operator <(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ < rhs.implementation_;
+}
+
+bool operator <=(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ <= rhs.implementation_;
+}
+
+bool operator >(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ > rhs.implementation_;
+}
+
+bool operator >=(const port& lhs, const port& rhs)
+{
+	return lhs.implementation_ >= rhs.implementation_;
+}
+
 } // end of namespace process
 } // end of namespace matcha
 

@@ -70,7 +70,7 @@ timer_port::read()
 	}
 }
 
-port_implementation_base&
+os_specific_port_implementation&
 timer_port::implementation()
 {
 	return *implementation_;

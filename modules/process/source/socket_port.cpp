@@ -15,21 +15,17 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_BITS_BITS_LINUX_HPP__
-#define MATCHA_PROCESS_BITS_BITS_LINUX_HPP__
+
+#include "matcha/process/socket_port.hpp"
+#include "socket_port.internal.hpp"
 
 namespace matcha { namespace process {
 
-class os_specific_port_implementation
+socket_port::socket_port(uint32_t address, uint16_t port) :
+	implementation_( new typename socket_port::implementation(address, port) )
 {
-public:
-	os_specific_port_implementation();
-	virtual ~os_specific_port_implementation() noexcept;
-
-	virtual int get_fd() = 0;
-};
+}
 
 } // end of namespace process
 } // end of namespace matcha
 
-#endif

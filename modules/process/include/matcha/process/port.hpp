@@ -29,7 +29,7 @@
 
 namespace matcha { namespace process {
 
-class port_implementation_base;
+class os_specific_port_implementation;
 
 class port
 {
@@ -37,15 +37,31 @@ public:
 	port();
 	virtual ~port() noexcept;
 
-	virtual port_implementation_base& implementation() = 0;
+	virtual os_specific_port_implementation& implementation() = 0;
 
 	virtual core::optional<event> read() = 0;
 	virtual void send(event& event) = 0;
 
+	port& add_to_listener(listener& listener);
+
 private:
 	class implementation;
 	std::shared_ptr<typename port::implementation> implementation_;
+
+	friend bool operator ==(const port& lhs, const port& rhs);
+	friend bool operator !=(const port& lhs, const port& rhs);
+	friend bool operator <(const port& lhs, const port& rhs);
+	friend bool operator <=(const port& lhs, const port& rhs);
+	friend bool operator >(const port& lhs, const port& rhs);
+	friend bool operator >=(const port& lhs, const port& rhs);
 };
+
+bool operator ==(const port& lhs, const port& rhs);
+bool operator !=(const port& lhs, const port& rhs);
+bool operator <(const port& lhs, const port& rhs);
+bool operator <=(const port& lhs, const port& rhs);
+bool operator >(const port& lhs, const port& rhs);
+bool operator >=(const port& lhs, const port& rhs);
 
 } // end of namespace process
 } // end of namespace matcha

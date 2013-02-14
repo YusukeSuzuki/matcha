@@ -15,43 +15,54 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_TIMER_PORT_HPP__
-#define MATCHA_PROCESS_TIMER_PORT_HPP__
+#ifndef MATCHA_PROCESS_SOCKET_PORT_HPP__
+#define MATCHA_PROCESS_SOCKET_PORT_HPP__
 
 #include <matcha/process/port.hpp>
 
 #include <cstdint>
-#include <ctime>
 #include <functional>
 #include <memory>
+#include <string>
+#include <vector>
 
 namespace matcha { namespace process {
 
-class timer_port : public port
+class socket_port : port
 {
 public:
-	timer_port();
-	virtual ~timer_port() noexcept;
+	socket_port() = delete;
+	socket_port(uint32_t address, uint16_t port);
 
-	static std::shared_ptr<timer_port> create();
+	virtual ~socket_port() noexcept;
 
 	virtual os_specific_port_implementation& implementation();
 
-	virtual core::optional<event> read();
-	virtual void send(event& event);
+	using handler_function =
+		std::function<void(socket_port&, std::vector<uint8_t>& data)>;
 
-	using handler_function = std::function<void(timer_port&, uint64_t expiration)>;
-
-	timer_port& handler(const timer_port::handler_function& handler);
+	socket_port& handler(const socket_port::handler_function& handler);
 	const handler_function& handler() const;
 
-	timer_port& start(long sec, long nanosec, bool is_interval);
-	timer_port& stop();
+	socket_port& write(std::vector<uint8_t>& data);
+	socket_port& write(std::string& data);
 
 private:
 	class implementation;
-	std::shared_ptr<typename timer_port::implementation> implementation_;
+	std::shared_ptr<typename socket_port::implementation> implementation_;
 };
+
+/*
+class listen_port : public socket_port
+{
+public:
+	listen_port& handle(event& event);
+
+private:
+	class implementation;
+	std::shared_ptr<typename listen_port::implementation> implementation_;
+};
+*/
 
 } // end of namespace process
 } // end of namespace matcha

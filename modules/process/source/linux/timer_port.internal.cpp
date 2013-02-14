@@ -25,7 +25,7 @@
 namespace matcha { namespace process {
 
 timer_port::implementation::implementation() :
-	port_implementation_base(),
+	os_specific_port_implementation(),
 	fd_( timerfd_create(CLOCK_REALTIME , 0) ),
 	handler_( [](timer_port&, uint64_t) -> void {} )
 {

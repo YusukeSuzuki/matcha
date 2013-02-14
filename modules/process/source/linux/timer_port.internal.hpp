@@ -19,11 +19,11 @@
 #define MATCHA_PROCESS_TIMER_PORT_INTERNAL_HPP__
 
 #include "matcha/process/timer_port.hpp"
-#include "matcha/process/bits/port_implementation_base.hpp"
+#include "matcha/process/bits/bits.linux.hpp"
 
 namespace matcha { namespace process {
 
-class timer_port::implementation : public port_implementation_base
+class timer_port::implementation : public os_specific_port_implementation
 {
 public:
 	implementation();

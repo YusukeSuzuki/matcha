@@ -15,32 +15,33 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_PROCESS_SOCK_PORT_HPP__
-#define MATCHA_PROCESS_SOCK_PORT_HPP__
+#ifndef MATCHA_PROCESS_SOCKET_PORT_INTERNAL_HPP__
+#define MATCHA_PROCESS_SOCKET_PORT_INTERNAL_HPP__
 
-#include <matcha/process/port.hpp>
-#include <memory>
+#include "matcha/process/socket_port.hpp"
+#include "matcha/process/bits/bits.linux.hpp"
 
 namespace matcha { namespace process {
 
-class sock_port
+class socket_port::implementation : public os_specific_port_implementation
 {
 public:
-	sock_port& handle(event& event);
+	implementation() = delete;
+	implementation(uint32_t address, uint16_t port);
+
+	virtual ~implementation() noexcept;
+
+	virtual int get_fd();
+
+	void handler(const socket_port::handler_function& handler);
+	const socket_port::handler_function& handler() const;
+
+	void write(const std::vector<uint8_t>& data);
+	void write(const std::string& data);
 
 private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-};
-
-class listen_port : public sock_port
-{
-public:
-	sock_port& handle(event& event);
-
-private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
+	int fd_;
+	socket_port::handler_function handler_;
 };
 
 } // end of namespace process
