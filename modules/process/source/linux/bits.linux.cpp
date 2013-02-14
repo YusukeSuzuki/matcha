@@ -16,36 +16,18 @@
  *    limitations under the License.
  */
 
-#include "matcha/process/socket_port.hpp"
 #include "socket_port.internal.hpp"
 
 namespace matcha { namespace process {
 
-socket_port::socket_port(uint32_t address, uint16_t port) :
-	implementation_( new typename socket_port::implementation(address, port) )
+os_specific_port_implementation::os_specific_port_implementation()
 {
 }
 
-socket_port::~socket_port() noexcept
+os_specific_port_implementation::~os_specific_port_implementation() noexcept
 {
 }
 
-os_specific_port_implementation&
-socket_port::implementation()
-{
-	return *implementation_;
-}
-
-core::optional<event>
-socket_port::read()
-{
-	return core::none;
-}
-
-void
-socket_port::send(event& event)
-{
-}
 
 } // end of namespace process
 } // end of namespace matcha

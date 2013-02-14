@@ -31,6 +31,15 @@ event::event(const event& event) :
 {
 }
 
+event&
+event::operator=(const event& event)
+{
+	if(this == &event) return *this;
+
+	*implementation_ = *event.implementation_;
+	return *this;
+}
+
 event::event(const core::any& content) :
 	implementation_( new event::implementation(content) )
 {

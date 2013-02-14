@@ -27,6 +27,7 @@
 namespace matcha { namespace process {
 
 socket_port::implementation::implementation(uint32_t address, uint16_t port) :
+	os_specific_port_implementation(),
 	fd_( socket(AF_INET, SOCK_STREAM, 0) ),
 	handler_( [](socket_port&, std::vector<uint8_t>&) -> void {} )
 {
@@ -38,7 +39,7 @@ socket_port::implementation::implementation(uint32_t address, uint16_t port) :
 
 socket_port::implementation::~implementation() noexcept
 {
-	close(fd_);
+	::close(fd_);
 }
 
 int

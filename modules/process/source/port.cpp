@@ -18,7 +18,11 @@
 #include "matcha/process/port.hpp"
 #include "port.internal.hpp"
 
-namespace matcha { namespace process {
+namespace matcha {
+	
+template class core::optional<process::event>;
+
+namespace process {
 
 port::port() :
 	implementation_( new typename port::implementation() )
