@@ -46,7 +46,7 @@ public:
 
 	optional& operator =(const T& t)
 	{
-		if(ptr_) *ptr_ = t; else ptr_ = new T(t);
+		if(ptr_) *ptr_ = t; else ptr_ = std::unique_ptr<T>( new T(t) );
 		return *this;
 	}
 
@@ -130,5 +130,7 @@ operator !=(none_t lhs, const optional<T>& rhs)
 
 } // end of namespace Core
 } // end of namespace Matcha
+
+#include <matcha/core/bits/optional.extern.hpp>
 
 #endif
