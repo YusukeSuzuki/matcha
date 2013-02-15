@@ -37,6 +37,8 @@ public:
 	virtual ~socket_port() noexcept;
 
 	virtual os_specific_port_implementation& implementation();
+	virtual core::optional<event> read();
+	virtual void send(event& event);
 
 	using handler_function =
 		std::function<void(socket_port&, std::vector<uint8_t>& data)>;

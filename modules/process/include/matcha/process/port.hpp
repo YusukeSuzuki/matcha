@@ -27,7 +27,12 @@
 
 #include <memory>
 
-namespace matcha { namespace process {
+
+namespace matcha {
+	
+extern template class core::optional<process::event>;
+
+namespace process {
 
 class os_specific_port_implementation;
 

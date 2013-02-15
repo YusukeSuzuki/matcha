@@ -29,7 +29,8 @@ class event
 public:
 	event();
 	event(const event& event);
-	event(const core::any& content);
+	event& operator =(const event& event);
+	explicit event(const core::any& content);
 	virtual ~event() noexcept;
 
 	const core::any& content() const;
