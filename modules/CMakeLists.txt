@@ -31,6 +31,7 @@ add_subdirectory (cl)
 #add_subdirectory (opencl)
 #add_subdirectory (math.opencl)
 #add_subdirectory (image.opencl)
+add_subdirectory (ui)
 
 set(CPACK_GENERATOR "DEB")
 set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Yusuke Suzuki")
