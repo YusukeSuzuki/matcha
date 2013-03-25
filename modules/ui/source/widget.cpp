@@ -15,35 +15,19 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCAH_UI_BUTTON_HPP__
-#define MATCAH_UI_BUTTON_HPP__
 
-#include <matcha/ui/widget.hpp>
-
-#include <functional>
-#include <memory>
-#include <string>
+#include "matcha/ui/widget.hpp"
 
 namespace matcha { namespace ui {
 
-class button : public widget
+widget::widget()
 {
-public:
-	button();
-	button(const std::string& label);
-	virtual ~button() noexcept;
+}
 
-	button& show();
-
-	using on_click_handler = std::function<void(button&)>;
-	button& on_click(const on_click_handler& handler);
-
-private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-};
+widget::~widget() noexcept
+{
+}
 
 } // end of namespace ui
 } // end of namespace matcha
 
-#endif

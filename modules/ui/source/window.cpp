@@ -18,6 +18,8 @@
 #include "matcha/ui/window.hpp"
 #include "window.internal.hpp"
 
+#include "matcha/ui/widget.hpp"
+
 namespace matcha { namespace ui {
 
 window::window(const std::string& title) :
@@ -47,6 +49,12 @@ window&
 window::on_delete(const on_delete_handler& handler)
 {
 	implementation_->on_delete(handler);
+	return *this;
+}
+
+window&
+window::add(std::shared_ptr<widget> widget)
+{
 	return *this;
 }
 

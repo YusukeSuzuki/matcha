@@ -53,8 +53,6 @@ window::implementation::on_delete(const window::on_delete_handler& handler)
 	on_delete_handler_ = handler;
 	g_signal_connect(widget_, "destroy",
 		G_CALLBACK( (void(*)(GtkWidget*, gpointer))(&implementation::on_delete) ), this);
-	//void(*f)(GtkWidget*, gpointer) = implementation::on_delete;
-	//f(nullptr, nullptr);
 }
 
 void

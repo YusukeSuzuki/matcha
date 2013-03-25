@@ -18,44 +18,27 @@
 #ifndef MATCHA_UI_WINDOW_INTERNAL_HPP__
 #define MATCHA_UI_WINDOW_INTERNAL_HPP__
 
-#include "matcha/core/optional.hpp"
-#include "matcha/ui/window.hpp"
+#include "matcha/ui/widget.hpp"
 
 #include <gtk/gtk.h>
 
 namespace matcha { namespace ui {
 
-template<typename T>
-GtkWidget* widghet_cast(T* widget)
-{
-	return reinterpret_cast<GtkWidget*>(widget);
-}
-
-template<typename T>
-auto widget_cast(GtkWidget* widget) -> T*
-{
-	return reinterpret_cast<T*>(widget);
-}
-
-class window::implementation
+class widget::implementation
 {
 public:
-	implementation(window* window, const std::string& title);
+	implementation() = delete;
+	implementation(GtkWidget* gtk_widget);
 	virtual ~implementation() noexcept;
 
 	void show();
-	void resize(int width, int height);
 
-	void on_delete(const window::on_delete_handler& handler);
-	static void on_delete(GtkWidget* w, gpointer d);
+	GtkWidget* widget_ptr();
 
 private:
-	window* window_;
 	GtkWidget* widget_;
-	GtkWindow* window_ptr();
-
-	core::optional<window::on_delete_handler> on_delete_handler_;
 };
+
 
 } // end of namespace process
 } // end of namespace matcha

@@ -15,35 +15,39 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCAH_UI_BUTTON_HPP__
-#define MATCAH_UI_BUTTON_HPP__
-
-#include <matcha/ui/widget.hpp>
-
-#include <functional>
-#include <memory>
-#include <string>
+#include "button.internal.hpp"
 
 namespace matcha { namespace ui {
 
-class button : public widget
+button::implementation::implementation(button* button, const std::string& label) :
+	widget::implementation( gtk_button_new_with_label(label.c_str()) ),
+	button_(button)
 {
-public:
-	button();
-	button(const std::string& label);
-	virtual ~button() noexcept;
+}
 
-	button& show();
+button::implementation::~implementation() noexcept
+{
+}
 
-	using on_click_handler = std::function<void(button&)>;
-	button& on_click(const on_click_handler& handler);
+void
+button::implementation::on_click(const button::on_click_handler& handler)
+{
+	on_click_handler_ = handler;
+	g_signal_connect(widget_ptr(), "clicked",
+		G_CALLBACK( (void(*)(GtkWidget*,gpointer))(&implementation::on_click)), this);
+}
 
-private:
-	class implementation;
-	std::shared_ptr<implementation> implementation_;
-};
+void
+button::implementation::on_click(GtkWidget* w, gpointer d)
+{
+	button::implementation* button = reinterpret_cast<button::implementation*>(d);
+
+	if(button->on_click_handler_)
+	{
+		(*button->on_click_handler_)(*button->button_);
+	}
+}
 
 } // end of namespace ui
 } // end of namespace matcha
 
-#endif
