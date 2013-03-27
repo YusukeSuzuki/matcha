@@ -25,6 +25,16 @@ size::size(const matrix_base& image) :
 {
 }
 
+template image<uint8_t> make_image(int width, int height, int channels);
+template image<uint16_t> make_image(int width, int height, int channels);
+template image<uint32_t> make_image(int width, int height, int channels);
+template image<uint64_t> make_image(int width, int height, int channels);
+template image<int8_t> make_image(int width, int height, int channels);
+template image<int16_t> make_image(int width, int height, int channels);
+template image<int32_t> make_image(int width, int height, int channels);
+template image<int64_t> make_image(int width, int height, int channels);
+template image<float> make_image(int width, int height, int channels);
+template image<double> make_image(int width, int height, int channels);
 
 } // end of namespace image
 } // end of namespace matcha

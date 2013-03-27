@@ -15,50 +15,23 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_IMAGE_HPP__
-#define MATCHA_IMAGE_HPP__
+#ifndef MATCHA_IMAGE_IMAGE_TEMPLATES_HPP__
+#define MATCHA_IMAGE_IMAGE_TEMPLATES_HPP__
 
-#include <matcha/math/matrix.hpp>
+#include <matcha/image/image.hpp>
 
 namespace matcha { namespace image {
 
-using namespace math;
-using image_base = matrix_base;
-template<typename T> using image = matrix<T>;
-
-struct size
-{
-	int width;
-	int height;
-
-	size(const matrix_base& image);
-};
-
-struct rect
-{
-	int x;
-	int y;
-	int width;
-	int height;
-};
-
-enum class color_space
-{
-	grayscale,
-	rgb,
-	rgba,
-	bgr,
-	bgra
-};
-
 template<typename T>
-image<T> make_image(int width, int height, int channels);
+image<T> make_image(int width, int height, int channels)
+{
+	return image<T>(height, width, channels);
+}
 
-void make_integral(const image_base& src, image_base& dst);
+extern template image<uint8_t> make_image(int width, int height, int channels);
+extern template image<uint16_t> make_image(int width, int height, int channels);
 
 } // end of namespace image
 } // end of namespace matcha
-
-#include <matcha/image/image.templates.hpp>
 
 #endif
