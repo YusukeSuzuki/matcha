@@ -318,6 +318,14 @@ public:
 	}
 
 	kernel& set_argument(unsigned int index, buffer& buffer);
+	kernel& set_argument(unsigned int index, size_t size, void* ptr);
+
+	template<typename T>
+	kernel& set_argument(unsigned int index, const T& d)
+	{
+		set_argument(index, sizeof(T), &d);
+		return *this;
+	}
 
 	enum class info_name
 	{

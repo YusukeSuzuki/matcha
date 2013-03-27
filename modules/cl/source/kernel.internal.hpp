@@ -51,6 +51,14 @@ public:
 		}
 	}
 
+	void set_argument(unsigned int index, size_t size, void* ptr)
+	{
+		if(int err = clSetKernelArg(kernel_, index, size, ptr) )
+		{
+			throw( cl_exception(MATCHA_EXCEPTION_WHERE.c_str(), err) );
+		}
+	}
+
 	operator cl_kernel()
 	{
 		return kernel_;

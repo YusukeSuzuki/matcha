@@ -84,6 +84,13 @@ kernel::set_argument(unsigned int index, buffer& buffer)
 	return *this;
 }
 
+kernel&
+kernel::set_argument(unsigned int index, size_t size, void* ptr)
+{
+	implementation_->set_argument(index, size, ptr);
+	return *this;
+}
+
 } // end of namespace Core
 } // end of namespace Matcha
 
