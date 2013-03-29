@@ -82,6 +82,42 @@ macro (matcha_library_definition name)
 endmacro()
 
 # --------------------------------------------------------------------------------
+macro (matcha_executable_definition name)
+	set(the_target "${name}")
+	project(${the_target})
+
+	include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../include)
+	include_directories(${CMAKE_CURRENT_BINARY_DIR}/../include)
+
+	foreach(d ${ARGN})
+		include_directories(${CMAKE_CURRENT_SOURCE_DIR}/../../${d}/include)
+	endforeach()
+
+	add_executable(${the_target} main.cpp)
+
+	set(BUILD_FLAGS "")
+
+	if(CMAKE_COMPILER_IS_GNUCXX)
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
+	endif()
+	if(CMAKE_CXX_COMPILER MATCHES ".*clang\\+\\+.*")
+		set(BUILD_FLAGS "${BUILD_FLAGS} -std=c++0x -Wall -Werror -g")
+	endif()
+
+	set_source_files_properties(SOURCE ${exe_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
+	set_source_files_properties(SOURCE ${sys_exe_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
+	set_source_files_properties(SOURCE ${ext_exe_srcs} PROPERTIES COMPILE_FLAGS ${BUILD_FLAGS})
+
+	foreach(d ${lib_external})
+		target_link_libraries(${the_target} ${d})
+	endforeach()
+
+	foreach(d ${ARGN})
+		target_link_libraries(${the_target} matcha_${d})
+	endforeach()
+endmacro()
+
+# --------------------------------------------------------------------------------
 macro (matcha_test_definition name)
 	set(the_target "${name}")
 	project (${the_target})
