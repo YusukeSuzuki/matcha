@@ -21,5 +21,5 @@ matcha_project_decraration(core)
 file(GLOB lib_srcs "*.cpp")
 
 set(lib_external stdc++ msgpack pthread)
-matcha_library_definition(cath)
+matcha_library_definition(core)
 
