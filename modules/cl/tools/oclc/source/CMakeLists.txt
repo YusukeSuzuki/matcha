@@ -16,8 +16,8 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-add_subdirectory (source)
-matcha_header_install_definition(cl)
-add_subdirectory (tools)
-add_subdirectory (tests)
+set(target "oclc")
+
+file(GLOB exe_srcs "*.cpp")
+matcha_executable_definition("${target}" core cl)
 

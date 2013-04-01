@@ -262,6 +262,8 @@ public:
 	// test version
 	event enqueue_nd_range(kernel& kernel, size_t worksize);
 
+	event enqueue_task(kernel& kernel);
+
 	event enqueue_read(
 		buffer& buffer, bool block_read, size_t offset, size_t size_in_bytes,
 		void* out_ptr, const std::vector<event>& wait_list);
