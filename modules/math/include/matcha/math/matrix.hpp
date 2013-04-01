@@ -31,6 +31,13 @@
 
 namespace matcha { namespace math {
 
+template<typename T>
+T* ptr_cast_from_int8_t(void* ptr, size_t offset)
+{
+	return static_cast<T*> (
+		static_cast<void*> ( static_cast<int8_t*>(ptr) + offset) );
+}
+
 struct matrix_header
 {
 	uint32_t rows;
@@ -223,6 +230,65 @@ public:
 					sizeof(type) * (base_.data_->header.channels * col + channel) ) );
 		return *ptr;
 	}
+
+	matrix<T>& swap_row(uint32_t row1, uint32_t row2)
+	{
+		assert( (row1 < base_.data_->header.rows) && "row, out of range" );
+		assert( (row2 < base_.data_->header.rows) && "row, out of range" );
+
+		const size_t row1_offset = base_.data_->header.row_size  * row1;
+		const size_t row2_offset = base_.data_->header.row_size  * row2;
+
+		for(uint32_t i = 0; i < base_.data_->header.cols; ++i)
+		{
+			for(uint32_t j = 0; j < base_.data_->header.channels; ++j)
+			{
+				const size_t col_offset =
+					sizeof(type) * (base_.data_->header.channels * i + j);
+
+				type* const ptr1 = ptr_cast_from_int8_t<type>(
+						base_.data_->data, row1_offset + col_offset);
+				type* const ptr2 = ptr_cast_from_int8_t<type>(
+						base_.data_->data, row2_offset + col_offset);
+
+				type temp = *ptr1;
+				*ptr1 = *ptr2;
+				*ptr2 = temp;
+
+			}
+		}
+
+		return *this;
+	}
+
+	matrix<T>& swap_col(uint32_t col1, uint32_t col2)
+	{
+		assert( (col1 < base_.data_->header.cols) && "col, out of range" );
+		assert( (col2 < base_.data_->header.cols) && "col, out of range" );
+
+		const size_t col1_offset = sizeof(type) * base_.data_->header.channels * col1;
+		const size_t col2_offset = sizeof(type) * base_.data_->header.channels * col2;
+		const size_t row_size = sizeof(type) * base_.data_->header.rows;
+
+		for(uint32_t i = 0; i < base_.data_->header.rows; ++i)
+		{
+			type* ptr1 = ptr_cast_from_int8_t<type>(
+				base_.data_->data, row_size * i + col1_offset);
+			type* ptr2 = ptr_cast_from_int8_t<type>(
+				base_.data_->data, row_size * i + col2_offset);
+
+			for(uint32_t j = 0; j < base_.data_->header.channels; ++j)
+			{
+				type temp = *(ptr1 + j);
+				*(ptr1 + j) = *(ptr2 + j);
+				*(ptr2 + j) = temp;
+
+			}
+		}
+
+		return *this;
+	}
+
 
 	const matrix_base& base() const
 	{
