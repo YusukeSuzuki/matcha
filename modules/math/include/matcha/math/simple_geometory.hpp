@@ -15,8 +15,8 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_LINEAR_ALGEBRA_HPP__
-#define MATCHA_MATH_LINEAR_ALGEBRA_HPP__
+#ifndef MATCHA_MATH_GEOMETORY_HPP__
+#define MATCHA_MATH_GEOMETORY_HPP__
 
 namespace matcha { namespace math {
 
