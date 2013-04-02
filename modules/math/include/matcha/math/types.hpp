@@ -20,7 +20,6 @@
 
 #include <cassert>
 #include <cstdint>
-#include <iostream>
 #include <string>
 
 namespace matcha { namespace math {
@@ -49,6 +48,8 @@ template<> constexpr bool is_supported_type< int32_t>(){ return true; }
 template<> constexpr bool is_supported_type<uint32_t>(){ return true; }
 template<> constexpr bool is_supported_type<   float>(){ return true; }
 template<> constexpr bool is_supported_type<  double>(){ return true; }
+
+bool is_supported_type( type_id_t type );
 
 template<typename T>
 constexpr type_id_t type_id()
