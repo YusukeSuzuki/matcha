@@ -80,6 +80,8 @@ class matrix_base
 public:
 	matrix_base(const matcha::math::matrix_header& header);
 	matrix_base(matrix_base&& matrixBase);
+	matrix_base(const matrix_base& matrix_base_a);
+	matrix_base& operator=(const matrix_base& matrix_base_a);
 
 	virtual ~matrix_base() noexcept;
 
@@ -94,8 +96,6 @@ public:
 	std::shared_ptr<matrix_data> data_;
 
 private:
-	matrix_base(const matrix_base& matrix_base_a);
-	matrix_base& operator=(const matrix_base& matrix_base_a);
 };
 
 template<typename T>
@@ -129,7 +129,10 @@ public:
 	{
 	};
 
-	matrix(const matrix& m);
+	matrix(const matrix& m) :
+		base_(m.base_)
+	{
+	}
 
 	matrix(matrix&& m) :
 		base_( std::forward<matrix_base>(m.base_) )
