@@ -15,30 +15,29 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_UTILITIES_I_HPP__
-#define MATCHA_MATH_UTILITIES_I_HPP__
+#ifndef MATCHA_MATH_STREAM_HPP__
+#define MATCHA_MATH_STREAM_HPP__
 
-namespace matcha { namespace math {
+#include <matcha/core/exception.hpp>
+
+#include <matcha/math/types.hpp>
+#include <matcha/math/scalar.hpp>
+#include <matcha/math/matrix.hpp>
+
+ #include <ostream>
+
+namespace matcha { namespace math { namespace easy_expression {
+
+std::ostream& operator << (std::ostream& out, const matrix_base& m);
 
 template<typename T>
-inline bool tri_equal(T a, T b, T c)
+std::ostream& operator << (std::ostream& out, const matrix<T>& m)
 {
-	return (a == b) && (b == c);
+	out << m.base();
 }
 
+} // end of namespace easy_expression
 } // end of namespace math
 } // end of namespace matcha
-
-#define MATCHA_MATH_DECL_ALL(TEMPLATE) \
-	TEMPLATE(  int8_t) \
-	TEMPLATE( uint8_t) \
-	TEMPLATE( int16_t) \
-	TEMPLATE(uint16_t) \
-	TEMPLATE( int32_t) \
-	TEMPLATE(uint32_t) \
-	TEMPLATE( int64_t) \
-	TEMPLATE(uint64_t) \
-	TEMPLATE(   float) \
-	TEMPLATE(  double)
 
 #endif
