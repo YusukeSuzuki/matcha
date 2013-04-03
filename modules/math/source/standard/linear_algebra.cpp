@@ -184,6 +184,46 @@ static inline void gemm_na_nb_i(
 }
 
 template<typename T>
+void mul(const matrix_base& a, T b, matrix_base& c)
+{
+	assert( tri_equal(
+			type_id<T>(),
+			static_cast<type_id_t>(a.data_->header.type),
+			static_cast<type_id_t>(c.data_->header.type) ) );
+
+	assert( &a != &c && "inplace is not supported" );
+
+	if( a.rows() != c.rows() || a.cols() != c.cols() || a.channels() != c.channels() )
+	{
+		c = decltype(c)(a.data_->header);
+	}
+
+	uint8_t* a_ptr = static_cast<uint8_t*>(a.data_->data);
+	uint8_t* c_ptr = static_cast<uint8_t*>(c.data_->data);
+
+	for(uint32_t r = 0; r < a.data_->header.rows; ++r)
+	{
+		T* a_cur_ptr = static_cast<T*>( static_cast<void*>( a_ptr ) );
+		T* c_cur_ptr = static_cast<T*>( static_cast<void*>( c_ptr ) );
+
+		for(uint32_t c = 0; c < a.data_->header.cols; ++c)
+		{
+			for(uint32_t ch = 0; ch < a.data_->header.channels; ++ch)
+			{
+				*c_cur_ptr = *a_cur_ptr * b;
+				++a_cur_ptr;
+				++c_cur_ptr;
+			}
+		}
+
+		a_ptr += a.data_->header.row_size;
+		c_ptr += c.data_->header.row_size;
+	}
+}
+
+template void mul<double>(const matrix_base& a, double b, matrix_base& c);
+
+template<typename T>
 static void gemm_ta_nb_i(
 	const matrix_base& a, const matrix_base& b,
 	const scalar_base& alpha, const scalar_base& beta,

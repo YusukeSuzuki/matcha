@@ -27,7 +27,7 @@ bool is_supported_type(type_id_t type)
 
 	switch( type )
 	{
-	MATCHA_MATH_DECL_ALL(MATCHA_LOCAL_CASE_MACRO_TEMP)
+	MATCHA_MATH_TYPES_DECL_ALL(MATCHA_LOCAL_CASE_MACRO_TEMP)
 		return true;
 	default:
 		return false;

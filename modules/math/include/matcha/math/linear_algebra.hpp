@@ -83,6 +83,33 @@ matrix<T> sub(const matrix<T>& a, const matrix<T>& b)
 }
 
 /**
+ * c = a * b
+ */
+template<typename T>
+void mul(const matrix_base& a, T b, matrix_base& c);
+
+extern template void mul<uint8_t>(const matrix_base& a, uint8_t b, matrix_base& c);
+extern template void mul<double>(const matrix_base& a, double b, matrix_base& c);
+
+/**
+ * c = a * b
+ */
+template<typename T>
+void mul(const matrix<T>& a, typename matrix<T>::type b, matrix<T>& c)
+{
+	mul(a.base(), b, c.base());
+}
+
+/**
+ * c = a * b
+ */
+template<typename T>
+void mul(typename matrix<T>::type a, const matrix<T>& b, matrix<T>& c)
+{
+	mul(b.base(), a, c.base());
+}
+
+/**
  * c = alpha * a * b + beta + c
  */
 void gemm(

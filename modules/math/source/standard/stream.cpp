@@ -95,7 +95,7 @@ std::ostream& operator << (std::ostream& out, const matrix_base& m)
 
 	switch( static_cast<type_id_t>(m.data_->header.type) )
 	{
-	MATCHA_MATH_DECL_ALL(MATCHA_LOCAL_CASE_MACRO_TEMP)
+	MATCHA_MATH_TYPES_DECL_ALL(MATCHA_LOCAL_CASE_MACRO_TEMP)
 	default:
 		break;
 	}

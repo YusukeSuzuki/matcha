@@ -148,4 +148,16 @@ inline std::size_t size_of_type(type_id_t type_id)
 } // end of namespace math
 } // end of namespace matcha
 
+#define MATCHA_MATH_TYPES_DECL_ALL(TEMPLATE) \
+	TEMPLATE(  int8_t) \
+	TEMPLATE( uint8_t) \
+	TEMPLATE( int16_t) \
+	TEMPLATE(uint16_t) \
+	TEMPLATE( int32_t) \
+	TEMPLATE(uint32_t) \
+	TEMPLATE( int64_t) \
+	TEMPLATE(uint64_t) \
+	TEMPLATE(   float) \
+	TEMPLATE(  double)
+
 #endif

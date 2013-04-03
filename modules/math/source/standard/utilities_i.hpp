@@ -29,16 +29,4 @@ inline bool tri_equal(T a, T b, T c)
 } // end of namespace math
 } // end of namespace matcha
 
-#define MATCHA_MATH_DECL_ALL(TEMPLATE) \
-	TEMPLATE(  int8_t) \
-	TEMPLATE( uint8_t) \
-	TEMPLATE( int16_t) \
-	TEMPLATE(uint16_t) \
-	TEMPLATE( int32_t) \
-	TEMPLATE(uint32_t) \
-	TEMPLATE( int64_t) \
-	TEMPLATE(uint64_t) \
-	TEMPLATE(   float) \
-	TEMPLATE(  double)
-
 #endif
