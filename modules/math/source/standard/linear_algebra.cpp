@@ -221,7 +221,11 @@ void mul(const matrix_base& a, T b, matrix_base& c)
 	}
 }
 
-template void mul<double>(const matrix_base& a, double b, matrix_base& c);
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	template void mul<T>(const matrix_base& a, T b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
 
 template<typename T>
 static void gemm_ta_nb_i(

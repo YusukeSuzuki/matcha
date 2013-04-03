@@ -89,7 +89,11 @@ template<typename T>
 void mul(const matrix_base& a, T b, matrix_base& c);
 
 extern template void mul<uint8_t>(const matrix_base& a, uint8_t b, matrix_base& c);
-extern template void mul<double>(const matrix_base& a, double b, matrix_base& c);
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	extern template void mul<T>(const matrix_base& a, T b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
 
 /**
  * c = a * b
