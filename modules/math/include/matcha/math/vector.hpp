@@ -15,31 +15,47 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_STREAM_HPP__
-#define MATCHA_MATH_STREAM_HPP__
+#ifndef MATCHA_MATH_VECTOR_HPP__
+#define MATCHA_MATH_VECTOR_HPP__
 
-#include <matcha/core/exception.hpp>
-
-#include <matcha/math/types.hpp>
 #include <matcha/math/scalar.hpp>
-#include <matcha/math/vector.hpp>
-#include <matcha/math/matrix.hpp>
+#include <matcha/math/types.hpp>
+#include <utility>
 
- #include <ostream>
+namespace matcha { namespace math {
 
-namespace matcha { namespace math { namespace easy_expression {
+template<typename T, unsigned d>
+using vector = scalar<T,d>;
 
-std::ostream& operator << (std::ostream& out, const matrix_base& m);
-
-template<typename T>
-std::ostream& operator << (std::ostream& out, const matrix<T>& m)
+template<typename T, unsigned d>
+double dot(const vector<T,d>& lhs, const vector<T,d>& rhs)
 {
-	out << m.base();
+	double r = 0;
+
+	for(auto i = 0; i < d; ++i)
+	{
+		r += lhs[i] * rhs[i];
+	}
+
+	return r;
 }
 
-std::ostream& operator << (std::ostream& out, const scalar_base& s);
+template<typename T>
+T cross(const vector<T,2>& lhs, const vector<T,2>& rhs)
+{
+	return  lhs[0] * rhs[1] - lhs[1] * rhs[0];
+}
 
-} // end of namespace easy_expression
+template<typename T>
+vector<T,3> cross(const vector<T,3>& lhs, const vector<T,3>& rhs)
+{
+	return vector<T,3>(
+		lhs[1] * rhs[2] - lhs[2] * rhs[1],
+		lhs[2] * rhs[0] - lhs[0] * rhs[2],
+		lhs[0] * rhs[1] - lhs[1] * rhs[0]
+		);
+}
+
 } // end of namespace math
 } // end of namespace matcha
 

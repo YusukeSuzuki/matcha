@@ -24,6 +24,11 @@
 
 namespace matcha { namespace math {
 
+enum class nop_t
+{
+	nop
+};
+
 struct scalar_base
 {
 	type_id_t type;
@@ -35,6 +40,35 @@ template<typename T, unsigned d>
 struct scalar 
 {
 	T var[d];
+
+	scalar() = default;
+	scalar(const scalar&) = default;
+	scalar& operator=(const scalar&) = default;
+	~scalar() noexcept = default;
+
+	template<typename... R>
+	scalar(T t, R... r)
+	{
+		static_assert( !(sizeof...(R) + 1 > d), "too many arguments");
+		static_assert( !(sizeof...(R) + 1 < d), "too few arguments");
+		assign(0, t, r...);
+	}
+
+	void assign(size_t i, T t)
+	{
+		if( i >= d ) return;
+		var[i] = t;
+	}
+
+	template<typename... R>
+	void assign(size_t i, T t, R... r)
+	{
+		if( i >= d ) return;
+
+		var[i] = t;
+
+		assign(i + 1, r...);
+	}
 
 	operator scalar_base()
 	{

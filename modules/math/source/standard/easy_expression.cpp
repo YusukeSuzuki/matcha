@@ -15,32 +15,18 @@
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
  */
-#ifndef MATCHA_MATH_STREAM_HPP__
-#define MATCHA_MATH_STREAM_HPP__
+#include "matcha/math/matrix.hpp"
+#include "matcha/math/linear_algebra.hpp"
+#include "matcha/core/exception.hpp"
 
-#include <matcha/core/exception.hpp>
+#include "utilities_i.hpp"
 
-#include <matcha/math/types.hpp>
-#include <matcha/math/scalar.hpp>
-#include <matcha/math/vector.hpp>
-#include <matcha/math/matrix.hpp>
-
- #include <ostream>
+#include <cassert>
 
 namespace matcha { namespace math { namespace easy_expression {
 
-std::ostream& operator << (std::ostream& out, const matrix_base& m);
-
-template<typename T>
-std::ostream& operator << (std::ostream& out, const matrix<T>& m)
-{
-	out << m.base();
-}
-
-std::ostream& operator << (std::ostream& out, const scalar_base& s);
 
 } // end of namespace easy_expression
 } // end of namespace math
 } // end of namespace matcha
 
-#endif

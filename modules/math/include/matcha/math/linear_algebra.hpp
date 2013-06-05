@@ -32,6 +32,10 @@ enum class transpose_option : int32_t
 	conjugate_transpose,
 };
 
+// ----------------------------------------------------------------------
+// add
+// ----------------------------------------------------------------------
+
 /**
  * c = a + b
  */
@@ -56,6 +60,12 @@ matrix<T> add(const matrix<T>& a, const matrix<T>& b)
 	add(a, b, c);
 	return std::move(c);
 }
+
+// ----------------------------------------------------------------------
+// sub
+// ----------------------------------------------------------------------
+
+// matrix matrix
 
 /**
  * c = a - b
@@ -82,13 +92,81 @@ matrix<T> sub(const matrix<T>& a, const matrix<T>& b)
 	return std::move(c);
 }
 
+// matrix numeric
+
+/**
+ * c = a - b
+ */
+template<typename T>
+void sub(const matrix_base& a, T b, matrix_base& c);
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	extern template void sub<T>(const matrix_base& a, T b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
+/**
+ * c = a - b
+ */
+template<typename T>
+void sub(T a, const matrix_base& b, matrix_base& c);
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	extern template void sub<T>(T a, const matrix_base& b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
+/**
+ * c = a - b
+ */
+template<typename T>
+void sub(const matrix<T>& a, typename matrix<T>::type b, matrix<T>& c)
+{
+	sub(a.base(), b, c.base());
+}
+
+/**
+ * c = a - b
+ */
+template<typename T>
+void sub(typename matrix<T>::type a, const matrix<T>& b, matrix<T>& c)
+{
+	sub(a, b.base(), c.base());
+}
+
+/**
+ * return a - b
+ */
+template<typename T>
+matrix<T> sub(const matrix<T>& a, typename matrix<T>::type b)
+{
+	matrix<T> c(a.rows(), a.cols(), a.channels());
+	sub(a.base(), b, c.base());
+	return std::move(c);
+}
+
+/**
+ * return a - b
+ */
+template<typename T>
+matrix<T> sub(typename matrix<T>::type a, const matrix<T>& b)
+{
+	matrix<T> c(b.rows(), b.cols(), b.channels());
+	sub(a, b.base(), c.base());
+	return std::move(c);
+}
+
+// ----------------------------------------------------------------------
+// mul
+// ----------------------------------------------------------------------
+
 /**
  * c = a * b
  */
 template<typename T>
 void mul(const matrix_base& a, T b, matrix_base& c);
 
-extern template void mul<uint8_t>(const matrix_base& a, uint8_t b, matrix_base& c);
+//extern template void mul<uint8_t>(const matrix_base& a, uint8_t b, matrix_base& c);
 
 #define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
 	extern template void mul<T>(const matrix_base& a, T b, matrix_base& c);
@@ -112,6 +190,32 @@ void mul(typename matrix<T>::type a, const matrix<T>& b, matrix<T>& c)
 {
 	mul(b.base(), a, c.base());
 }
+
+/**
+ * return = a * b
+ */
+template<typename T>
+matrix<T> mul(typename matrix<T>::type a, const matrix<T>& b)
+{
+	auto c = a;
+	mul(a, b, c);
+	return c;
+}
+
+/**
+ * return = a * b
+ */
+template<typename T>
+matrix<T> mul(const matrix<T>& b, typename matrix<T>::type a)
+{
+	auto c = a;
+	mul(a, b, c);
+	return c;
+}
+
+// ----------------------------------------------------------------------
+// gemm
+// ----------------------------------------------------------------------
 
 /**
  * c = alpha * a * b + beta + c

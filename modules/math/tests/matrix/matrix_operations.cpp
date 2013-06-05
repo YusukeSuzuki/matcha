@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE( fill_0 )
 
 	matrix<double> mat(3,3);
 
-	scalar<double, 1> scalar = {{3}};
+	scalar<double, 1> scalar(3);
 	fill(scalar, mat);
 
 	for(int i = 0; i < 3; ++i)

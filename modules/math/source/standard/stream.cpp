@@ -105,6 +105,31 @@ std::ostream& operator << (std::ostream& out, const matrix_base& m)
 	return out;
 }
 
+std::ostream& operator << (std::ostream& out, const scalar_base& s)
+{
+	out << "[";
+	for(std::size_t i = 0; i < s.dims; ++i)
+	{
+		#define MATCHA_LOCAL_CASE_MACRO_TEMP(T) \
+			case type_id<T>(): out << static_cast<T*>(s.data)[i] ; break;
+
+		switch( s.type )
+		{
+		MATCHA_MATH_TYPES_DECL_ALL(MATCHA_LOCAL_CASE_MACRO_TEMP)
+		default:
+			break;
+		}
+
+		#undef MATCHA_LOCAL_CASE_MACRO_TEMP
+
+		if(i < (s.dims - 1) ) out << ", ";
+	}
+
+	out << "]";
+
+	return out;
+}
+
 } // end of namespace easy_expression
 } // end of namespace math
 } // end of namespace matcha

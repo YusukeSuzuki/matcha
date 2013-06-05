@@ -120,6 +120,143 @@ void sub(const matrix_base& a, const matrix_base& b, matrix_base& c)
 }
 
 // ----------------------------------------------------------------------
+// sub
+// ----------------------------------------------------------------------
+
+template<typename T>
+void sub(const matrix_base& a, T b, matrix_base& c)
+{
+	assert( tri_equal(
+			type_id<T>(),
+			static_cast<type_id_t>(a.data_->header.type),
+			static_cast<type_id_t>(c.data_->header.type) ) );
+
+	assert( &a != &c && "inplace is not supported" );
+
+	if( a.rows() != c.rows() || a.cols() != c.cols() || a.channels() != c.channels() )
+	{
+		c = decltype(c)(a.data_->header);
+	}
+
+	uint8_t* a_ptr = static_cast<uint8_t*>(a.data_->data);
+	uint8_t* c_ptr = static_cast<uint8_t*>(c.data_->data);
+
+	for(uint32_t r = 0; r < a.data_->header.rows; ++r)
+	{
+		T* a_cur_ptr = static_cast<T*>( static_cast<void*>( a_ptr ) );
+		T* c_cur_ptr = static_cast<T*>( static_cast<void*>( c_ptr ) );
+
+		for(uint32_t c = 0; c < a.data_->header.cols; ++c)
+		{
+			for(uint32_t ch = 0; ch < a.data_->header.channels; ++ch)
+			{
+				*c_cur_ptr = *a_cur_ptr - b;
+				++a_cur_ptr;
+				++c_cur_ptr;
+			}
+		}
+
+		a_ptr += a.data_->header.row_size;
+		c_ptr += c.data_->header.row_size;
+	}
+}
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	template void sub<T>(const matrix_base& a, T b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
+template<typename T>
+void sub(T b, const matrix_base& a, matrix_base& c)
+{
+	assert( tri_equal(
+			type_id<T>(),
+			static_cast<type_id_t>(a.data_->header.type),
+			static_cast<type_id_t>(c.data_->header.type) ) );
+
+	assert( &a != &c && "inplace is not supported" );
+
+	if( a.rows() != c.rows() || a.cols() != c.cols() || a.channels() != c.channels() )
+	{
+		c = decltype(c)(a.data_->header);
+	}
+
+	uint8_t* a_ptr = static_cast<uint8_t*>(a.data_->data);
+	uint8_t* c_ptr = static_cast<uint8_t*>(c.data_->data);
+
+	for(uint32_t r = 0; r < a.data_->header.rows; ++r)
+	{
+		T* a_cur_ptr = static_cast<T*>( static_cast<void*>( a_ptr ) );
+		T* c_cur_ptr = static_cast<T*>( static_cast<void*>( c_ptr ) );
+
+		for(uint32_t c = 0; c < a.data_->header.cols; ++c)
+		{
+			for(uint32_t ch = 0; ch < a.data_->header.channels; ++ch)
+			{
+				*c_cur_ptr = b - *a_cur_ptr;
+				++a_cur_ptr;
+				++c_cur_ptr;
+			}
+		}
+
+		a_ptr += a.data_->header.row_size;
+		c_ptr += c.data_->header.row_size;
+	}
+}
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	template void sub<T>(T b, const matrix_base& a, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
+// ----------------------------------------------------------------------
+// sub
+// ----------------------------------------------------------------------
+
+template<typename T>
+void mul(const matrix_base& a, T b, matrix_base& c)
+{
+	assert( tri_equal(
+			type_id<T>(),
+			static_cast<type_id_t>(a.data_->header.type),
+			static_cast<type_id_t>(c.data_->header.type) ) );
+
+	assert( &a != &c && "inplace is not supported" );
+
+	if( a.rows() != c.rows() || a.cols() != c.cols() || a.channels() != c.channels() )
+	{
+		c = decltype(c)(a.data_->header);
+	}
+
+	uint8_t* a_ptr = static_cast<uint8_t*>(a.data_->data);
+	uint8_t* c_ptr = static_cast<uint8_t*>(c.data_->data);
+
+	for(uint32_t r = 0; r < a.data_->header.rows; ++r)
+	{
+		T* a_cur_ptr = static_cast<T*>( static_cast<void*>( a_ptr ) );
+		T* c_cur_ptr = static_cast<T*>( static_cast<void*>( c_ptr ) );
+
+		for(uint32_t c = 0; c < a.data_->header.cols; ++c)
+		{
+			for(uint32_t ch = 0; ch < a.data_->header.channels; ++ch)
+			{
+				*c_cur_ptr = *a_cur_ptr * b;
+				++a_cur_ptr;
+				++c_cur_ptr;
+			}
+		}
+
+		a_ptr += a.data_->header.row_size;
+		c_ptr += c.data_->header.row_size;
+	}
+}
+
+#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
+	template void mul<T>(const matrix_base& a, T b, matrix_base& c);
+MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
+#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
+
+// ----------------------------------------------------------------------
 // gemm
 // ----------------------------------------------------------------------
 template<typename T>
@@ -182,50 +319,6 @@ static inline void gemm_na_nb_i(
 		c_row_cur += c_row_size / sizeof(T);
 	}
 }
-
-template<typename T>
-void mul(const matrix_base& a, T b, matrix_base& c)
-{
-	assert( tri_equal(
-			type_id<T>(),
-			static_cast<type_id_t>(a.data_->header.type),
-			static_cast<type_id_t>(c.data_->header.type) ) );
-
-	assert( &a != &c && "inplace is not supported" );
-
-	if( a.rows() != c.rows() || a.cols() != c.cols() || a.channels() != c.channels() )
-	{
-		c = decltype(c)(a.data_->header);
-	}
-
-	uint8_t* a_ptr = static_cast<uint8_t*>(a.data_->data);
-	uint8_t* c_ptr = static_cast<uint8_t*>(c.data_->data);
-
-	for(uint32_t r = 0; r < a.data_->header.rows; ++r)
-	{
-		T* a_cur_ptr = static_cast<T*>( static_cast<void*>( a_ptr ) );
-		T* c_cur_ptr = static_cast<T*>( static_cast<void*>( c_ptr ) );
-
-		for(uint32_t c = 0; c < a.data_->header.cols; ++c)
-		{
-			for(uint32_t ch = 0; ch < a.data_->header.channels; ++ch)
-			{
-				*c_cur_ptr = *a_cur_ptr * b;
-				++a_cur_ptr;
-				++c_cur_ptr;
-			}
-		}
-
-		a_ptr += a.data_->header.row_size;
-		c_ptr += c.data_->header.row_size;
-	}
-}
-
-#define MATCHA_EXTERN_TEMPLATE_MACRO_TEMP(T) \
-	template void mul<T>(const matrix_base& a, T b, matrix_base& c);
-MATCHA_MATH_TYPES_DECL_ALL( MATCHA_EXTERN_TEMPLATE_MACRO_TEMP )
-#undef MATCHA_EXTERN_TEMPLATE_MACRO_TEMP
-
 
 template<typename T>
 static void gemm_ta_nb_i(
